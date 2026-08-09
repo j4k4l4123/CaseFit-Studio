@@ -802,13 +802,12 @@ document.addEventListener('DOMContentLoaded', () => {
             drawCircleCounterClockwise(ctx, rX, y + 70, 18);
             drawCircleCounterClockwise(ctx, rX, y + 135, 18);
         } else if (phone.cameraStyle === 'redmi_12c_square') {
-            // Redmi 12C Softcase Pro Camera: 4 precision circular hole cutouts
+            // Redmi 12C Softcase Pro Camera: EXACTLY 3 precision circular hole cutouts
             const camX = x + 20;
             const camY = y + 24;
-            drawCircleCounterClockwise(ctx, camX + 44, camY + 42, 24);  // Main 50MP Lens
-            drawCircleCounterClockwise(ctx, camX + 44, camY + 102, 18); // Depth Lens
-            drawCircleCounterClockwise(ctx, camX + 110, camY + 42, 9);   // Flash LED
-            drawCircleCounterClockwise(ctx, camX + 110, camY + 96, 21);  // Fingerprint Sensor Hole
+            drawCircleCounterClockwise(ctx, camX + 44, camY + 42, 24);  // 1. Main Lens Hole
+            drawCircleCounterClockwise(ctx, camX + 44, camY + 102, 18); // 2. Secondary Lens Hole
+            drawCircleCounterClockwise(ctx, camX + 110, camY + 72, 21);  // 3. Fingerprint Sensor Hole
         } else if (phone.cameraStyle === 'poco_m6_pro_dual') {
             // POCO M6 Pro Softcase Pro Camera: 4 precision circular hole cutouts
             const camX = x + 20;
@@ -1092,7 +1091,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
     }
 
-    // Redmi 12C Softcase Pro Camera (Raised 3D camera protection bump on case + 4 precision circular lens/sensor cutouts)
+    // Redmi 12C Softcase Pro Camera (Raised 3D camera bump + EXACTLY 3 circular hole cutouts: Main Lens, Secondary Lens, Fingerprint)
     function drawRedmi12CCameraIsland(ctx, cx, cy, cw, ch, cr) {
         ctx.save();
 
@@ -1117,9 +1116,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // === 2. Individual Lens/Sensor optics under cutouts + Case Bezel Lips ===
+        // === 2. EXACTLY 3 HOLES: Lenses & Fingerprint Sensor + 3D Case Bezel Lips ===
 
-        // --- Main 50MP Lens (top left) ---
+        // --- HOLE 1: Main 50MP Lens (top left) ---
         const lx1 = cx + 44, ly1 = cy + 42, lr1 = 24;
         ctx.save();
         ctx.beginPath();
@@ -1142,14 +1141,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
         ctx.restore();
 
-        // 3D Lip Ring on case around Main Lens
+        // 3D Lip Ring on case around Main Lens Hole
         ctx.beginPath();
         ctx.arc(lx1, ly1, lr1 + 1, 0, Math.PI * 2);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // --- Depth Lens (bottom left) ---
+        // --- HOLE 2: Secondary / Depth Lens (bottom left) ---
         const lx2 = cx + 44, ly2 = cy + 102, lr2 = 18;
         ctx.save();
         ctx.beginPath();
@@ -1167,39 +1166,15 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
         ctx.restore();
 
-        // 3D Lip Ring on case around Depth Lens
+        // 3D Lip Ring on case around Secondary Lens Hole
         ctx.beginPath();
         ctx.arc(lx2, ly2, lr2 + 1, 0, Math.PI * 2);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // --- LED Flash (top right) ---
-        const fx = cx + 110, fy = cy + 42, fr = 9;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(fx, fy, fr, 0, Math.PI * 2);
-        ctx.fillStyle = '#080c14';
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(fx, fy, 6, 0, Math.PI * 2);
-        ctx.fillStyle = '#fef08a';
-        ctx.shadowColor = '#fef08a';
-        ctx.shadowBlur = 8;
-        ctx.fill();
-        ctx.shadowColor = 'transparent';
-        ctx.restore();
-
-        // 3D Lip Ring on case around Flash
-        ctx.beginPath();
-        ctx.arc(fx, fy, fr + 1, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // --- Fingerprint Sensor Cutout (bottom right) ---
-        const fpx = cx + 110, fpy = cy + 96, fpr = 21;
+        // --- HOLE 3: Fingerprint Sensor Cutout (centered right) ---
+        const fpx = cx + 110, fpy = cy + 72, fpr = 21;
         ctx.save();
         ctx.beginPath();
         ctx.arc(fpx, fpy, fpr, 0, Math.PI * 2);
@@ -1219,7 +1194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         ctx.restore();
 
-        // 3D Lip Ring on case around Fingerprint sensor
+        // 3D Lip Ring on case around Fingerprint sensor Hole
         ctx.beginPath();
         ctx.arc(fpx, fpy, fpr + 1, 0, Math.PI * 2);
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
