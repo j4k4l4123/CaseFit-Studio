@@ -1107,36 +1107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.38)';
         ctx.lineWidth = 2;
         ctx.stroke();
-
-        // === 2. INNER BLACK CAPSULE / PILL POD (Left Half) ===
-        const pillX = cx + 8;
-        const pillY = cy + 8;
-        const pillW = 76;
-        const pillH = 134;
-        const pillR = 37;
-
-        ctx.save();
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        drawRoundedRect(ctx, pillX, pillY, pillW, pillH, pillR);
-        const pillGrad = ctx.createLinearGradient(pillX, pillY, pillX + pillW, pillY + pillH);
-        pillGrad.addColorStop(0, '#1a1e29');
-        pillGrad.addColorStop(0.5, '#0b0f19');
-        pillGrad.addColorStop(1, '#020617');
-        ctx.fillStyle = pillGrad;
-        ctx.fill();
-        ctx.shadowColor = 'transparent';
-
-        // Inner pill border
-        ctx.beginPath();
-        drawRoundedRect(ctx, pillX, pillY, pillW, pillH, pillR);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.restore();
-
-        // --- TOP CAMERA LENS (inside black pill) ---
+        // --- TOP CAMERA LENS ---
         const lx1 = cx + 46, ly1 = cy + 34, lr1 = 23;
         ctx.save();
         ctx.beginPath();
@@ -1166,7 +1137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // --- MIDDLE ROW: AI ICON (Left) & FLASH LED (Right) inside black pill ---
+        // --- MIDDLE ROW: AI ICON (Left) & FLASH LED (Right) ---
         // AI Icon (Middle Left)
         const aix = cx + 30, aiy = cy + 75, air = 9;
         ctx.save();
@@ -1199,7 +1170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         flashGrad.addColorStop(0.6, '#f1f5f9');
         flashGrad.addColorStop(1, '#cbd5e1');
         ctx.fillStyle = flashGrad;
-        flashGrad.addColorStop(0, '#ffffff');
         ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
         ctx.shadowBlur = 8;
         ctx.fill();
@@ -1212,7 +1182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.lineWidth = 1.2;
         ctx.stroke();
 
-        // --- BOTTOM CAMERA LENS (inside black pill) ---
+        // --- BOTTOM CAMERA LENS ---
         const lx2 = cx + 46, ly2 = cy + 116, lr2 = 23;
         ctx.save();
         ctx.beginPath();
@@ -1237,19 +1207,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // === 3. RIGHT SIDE: VERTICAL "Redmi" TEXT LOGO & FINGERPRINT SENSOR ===
-        // Vertical "Redmi" Text Branding (Top Right)
-        ctx.save();
-        ctx.font = '600 12px Outfit, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
-        ctx.textAlign = 'center';
-        ctx.translate(cx + cw - 22, cy + 42);
-        ctx.rotate(-Math.PI / 2);
-        ctx.fillText('Redmi', 0, 0);
-        ctx.restore();
-
+        // === 3. RIGHT SIDE: FINGERPRINT SENSOR ===
         // Circular Fingerprint Sensor (Bottom Right)
-        const fpx = cx + cw - 32, fpy = cy + 112, fpr = 18;
+        const fpx = cx + cw - 32, fpy = cy + 112, fpr = 18;8;
         ctx.save();
         ctx.beginPath();
         ctx.arc(fpx, fpy, fpr, 0, Math.PI * 2);
