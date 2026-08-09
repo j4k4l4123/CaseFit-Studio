@@ -802,14 +802,12 @@ document.addEventListener('DOMContentLoaded', () => {
             drawCircleCounterClockwise(ctx, rX, y + 70, 18);
             drawCircleCounterClockwise(ctx, rX, y + 135, 18);
         } else if (phone.cameraStyle === 'redmi_12c_square') {
-            // Redmi 12C: 2 large vertical camera circles, 2 small middle holes, 1 bottom-right circular element
+            // Redmi 12C: 3 circular case cutouts matching Screenshot 2026-08-09 132115.png
             const camX = x + 20;
             const camY = y + 24;
-            drawCircleCounterClockwise(ctx, camX + 46, camY + 38, 25);   // 1. Top Large Camera Circle
-            drawCircleCounterClockwise(ctx, camX + 46, camY + 112, 25);  // 2. Bottom Large Camera Circle
-            drawCircleCounterClockwise(ctx, camX + 38, camY + 75, 6);    // 3. Middle Small Hole 1 (Flash)
-            drawCircleCounterClockwise(ctx, camX + 54, camY + 75, 5);    // 4. Middle Small Hole 2 (AI Sensor)
-            drawCircleCounterClockwise(ctx, camX + 110, camY + 112, 18); // 5. Bottom-Right Small Circular Element
+            drawCircleCounterClockwise(ctx, camX + 46, camY + 34, 23);   // 1. Top Lens Hole
+            drawCircleCounterClockwise(ctx, camX + 46, camY + 116, 23);  // 2. Bottom Lens Hole
+            drawCircleCounterClockwise(ctx, camX + 118, camY + 112, 18); // 3. Fingerprint Sensor Hole
         } else if (phone.cameraStyle === 'poco_m6_pro_dual') {
             // POCO M6 Pro Softcase Pro Camera: 4 precision circular hole cutouts
             const camX = x + 20;
@@ -1093,7 +1091,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
     }
 
-    // Redmi 12C Camera Island (Top-left module, 2 large vertical camera circles, 2 small middle holes, 1 bottom-right circular element)
+    // Redmi 12C Camera Island (Matching Screenshot 2026-08-09 132115.png: inner black pill, AI icon, flash, vertical 'Redmi' logo & fingerprint)
     function drawRedmi12CCameraIsland(ctx, cx, cy, cw, ch, cr) {
         ctx.save();
 
@@ -1110,26 +1108,45 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        const m = 3;
+        // === 2. INNER BLACK CAPSULE / PILL POD (Left Half) ===
+        const pillX = cx + 8;
+        const pillY = cy + 8;
+        const pillW = 76;
+        const pillH = 134;
+        const pillR = 37;
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+        ctx.shadowBlur = 8;
         ctx.beginPath();
-        drawRoundedRect(ctx, cx + m, cy + m, cw - m * 2, ch - m * 2, cr - 3);
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
-        ctx.lineWidth = 1.5;
+        drawRoundedRect(ctx, pillX, pillY, pillW, pillH, pillR);
+        const pillGrad = ctx.createLinearGradient(pillX, pillY, pillX + pillW, pillY + pillH);
+        pillGrad.addColorStop(0, '#1a1e29');
+        pillGrad.addColorStop(0.5, '#0b0f19');
+        pillGrad.addColorStop(1, '#020617');
+        ctx.fillStyle = pillGrad;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+
+        // Inner pill border
+        ctx.beginPath();
+        drawRoundedRect(ctx, pillX, pillY, pillW, pillH, pillR);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 1;
         ctx.stroke();
+        ctx.restore();
 
-        // === 2. LENSES & ELEMENTS ACCORDING TO REDMI 12C SPECS ===
-
-        // --- TOP LARGE CAMERA CIRCLE ---
-        const lx1 = cx + 46, ly1 = cy + 38, lr1 = 25;
+        // --- TOP CAMERA LENS (inside black pill) ---
+        const lx1 = cx + 46, ly1 = cy + 34, lr1 = 23;
         ctx.save();
         ctx.beginPath();
         ctx.arc(lx1, ly1, lr1, 0, Math.PI * 2);
-        ctx.fillStyle = '#080c14';
+        ctx.fillStyle = '#070a12';
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(lx1, ly1, 13, 0, Math.PI * 2);
-        const mainOptics = ctx.createRadialGradient(lx1 - 4, ly1 - 4, 1, lx1, ly1, 13);
+        ctx.arc(lx1, ly1, 12, 0, Math.PI * 2);
+        const mainOptics = ctx.createRadialGradient(lx1 - 3, ly1 - 3, 1, lx1, ly1, 12);
         mainOptics.addColorStop(0, '#38bdf8');
         mainOptics.addColorStop(0.6, '#1e1b4b');
         mainOptics.addColorStop(1, '#020617');
@@ -1142,24 +1159,62 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
         ctx.restore();
 
-        // 3D Bezel Lip Ring around Top Large Camera Circle
+        // 3D Bezel Ring around Top Camera Lens
         ctx.beginPath();
         ctx.arc(lx1, ly1, lr1 + 1, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
-        ctx.lineWidth = 2.2;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 2;
         ctx.stroke();
 
-        // --- BOTTOM LARGE CAMERA CIRCLE ---
-        const lx2 = cx + 46, ly2 = cy + 112, lr2 = 25;
+        // --- MIDDLE ROW: AI ICON (Left) & FLASH LED (Right) inside black pill ---
+        // AI Icon (Middle Left)
+        const aix = cx + 30, aiy = cy + 75, air = 9;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(aix, aiy, air, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.font = '600 8px Outfit, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.textAlign = 'center';
+        ctx.fillText('AI', aix, aiy + 3);
+        ctx.restore();
+
+        // White Flash LED (Middle Right)
+        const fx = cx + 62, fy = cy + 75, fr = 7;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(fx, fy, fr, 0, Math.PI * 2);
+        const flashGrad = ctx.createRadialGradient(fx - 2, fy - 2, 1, fx, fy, fr);
+        flashGrad.addColorStop(0, '#ffffff');
+        flashGrad.addColorStop(0.6, '#f1f5f9');
+        flashGrad.addColorStop(1, '#94a3b8');
+        ctx.fillStyle = flashGrad;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.arc(fx, fy, fr + 0.8, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // --- BOTTOM CAMERA LENS (inside black pill) ---
+        const lx2 = cx + 46, ly2 = cy + 116, lr2 = 23;
         ctx.save();
         ctx.beginPath();
         ctx.arc(lx2, ly2, lr2, 0, Math.PI * 2);
-        ctx.fillStyle = '#080c14';
+        ctx.fillStyle = '#070a12';
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(lx2, ly2, 12, 0, Math.PI * 2);
-        const subOptics = ctx.createRadialGradient(lx2 - 3, ly2 - 3, 1, lx2, ly2, 12);
+        ctx.arc(lx2, ly2, 11, 0, Math.PI * 2);
+        const subOptics = ctx.createRadialGradient(lx2 - 3, ly2 - 3, 1, lx2, ly2, 11);
         subOptics.addColorStop(0, '#67e8f9');
         subOptics.addColorStop(0.6, '#1e1b4b');
         subOptics.addColorStop(1, '#020617');
@@ -1167,59 +1222,26 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
         ctx.restore();
 
-        // 3D Bezel Lip Ring around Bottom Large Camera Circle
+        // 3D Bezel Ring around Bottom Camera Lens
         ctx.beginPath();
         ctx.arc(lx2, ly2, lr2 + 1, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
-        ctx.lineWidth = 2.2;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 2;
         ctx.stroke();
 
-        // --- TWO SMALL HOLES IN THE MIDDLE BETWEEN THE TWO LARGE CIRCLES ---
-        // Small hole 1: Flash LED
-        const mx1 = cx + 38, my = cy + 75, mr1 = 6;
+        // === 3. RIGHT SIDE: VERTICAL "Redmi" TEXT LOGO & FINGERPRINT SENSOR ===
+        // Vertical "Redmi" Text Branding (Top Right)
         ctx.save();
-        ctx.beginPath();
-        ctx.arc(mx1, my, mr1, 0, Math.PI * 2);
-        ctx.fillStyle = '#080c14';
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(mx1, my, 4, 0, Math.PI * 2);
-        ctx.fillStyle = '#fef08a';
-        ctx.shadowColor = '#fef08a';
-        ctx.shadowBlur = 6;
-        ctx.fill();
-        ctx.shadowColor = 'transparent';
+        ctx.font = '600 12px Outfit, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+        ctx.textAlign = 'center';
+        ctx.translate(cx + cw - 22, cy + 42);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('Redmi', 0, 0);
         ctx.restore();
 
-        ctx.beginPath();
-        ctx.arc(mx1, my, mr1 + 1, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-
-        // Small hole 2: AI / Sensor Hole
-        const mx2 = cx + 54, mr2 = 5;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(mx2, my, mr2, 0, Math.PI * 2);
-        ctx.fillStyle = '#080c14';
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(mx2, my, 3, 0, Math.PI * 2);
-        ctx.fillStyle = '#1e1b4b';
-        ctx.fill();
-        ctx.restore();
-
-        ctx.beginPath();
-        ctx.arc(mx2, my, mr2 + 1, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-
-        // --- ONE SMALL CIRCULAR ELEMENT AT THE BOTTOM RIGHT SIDE ---
-        const fpx = cx + 110, fpy = cy + 112, fpr = 18;
+        // Circular Fingerprint Sensor (Bottom Right)
+        const fpx = cx + cw - 32, fpy = cy + 112, fpr = 18;
         ctx.save();
         ctx.beginPath();
         ctx.arc(fpx, fpy, fpr, 0, Math.PI * 2);
@@ -1239,7 +1261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         ctx.restore();
 
-        // 3D Bezel Lip Ring around bottom-right circular element
+        // 3D Bezel Lip Ring around Fingerprint Sensor
         ctx.beginPath();
         ctx.arc(fpx, fpy, fpr + 1, 0, Math.PI * 2);
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
