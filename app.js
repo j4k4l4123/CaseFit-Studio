@@ -802,17 +802,21 @@ document.addEventListener('DOMContentLoaded', () => {
             drawCircleCounterClockwise(ctx, rX, y + 70, 18);
             drawCircleCounterClockwise(ctx, rX, y + 135, 18);
         } else if (phone.cameraStyle === 'redmi_12c_square') {
-            // Redmi 12C: rounded squaricle case cutout (2 vertical lenses + flash + fingerprint)
-            const camW = 156, camH = 145, camR = 30;
+            // Redmi 12C Softcase Pro Camera: 4 precision circular hole cutouts
             const camX = x + 20;
             const camY = y + 24;
-            drawRoundedRectPathCounterClockwise(ctx, camX, camY, camW, camH, camR);
+            drawCircleCounterClockwise(ctx, camX + 44, camY + 42, 24);  // Main 50MP Lens
+            drawCircleCounterClockwise(ctx, camX + 44, camY + 102, 18); // Depth Lens
+            drawCircleCounterClockwise(ctx, camX + 110, camY + 42, 9);   // Flash LED
+            drawCircleCounterClockwise(ctx, camX + 110, camY + 96, 21);  // Fingerprint Sensor Hole
         } else if (phone.cameraStyle === 'poco_m6_pro_dual') {
-            // POCO M6 Pro: squaricle case cutout for 4-element camera module
-            const camW = 160, camH = 160, camR = 32;
+            // POCO M6 Pro Softcase Pro Camera: 4 precision circular hole cutouts
             const camX = x + 20;
             const camY = y + 24;
-            drawRoundedRectPathCounterClockwise(ctx, camX, camY, camW, camH, camR);
+            drawCircleCounterClockwise(ctx, camX + 46, camY + 46, 28);  // Main 64MP OIS Lens
+            drawCircleCounterClockwise(ctx, camX + 46, camY + 112, 26); // Ultra-wide Lens
+            drawCircleCounterClockwise(ctx, camX + 112, camY + 44, 16); // Macro Lens
+            drawCircleCounterClockwise(ctx, camX + 112, camY + 112, 15);// Flash LED Ring
         }
     }
 
@@ -1088,57 +1092,44 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
     }
 
-    // Redmi 12C Camera Island (Squaricle case module containing 2 vertical lenses, flash, fingerprint sensor)
+    // Redmi 12C Softcase Pro Camera (Raised 3D camera protection bump on case + 4 precision circular lens/sensor cutouts)
     function drawRedmi12CCameraIsland(ctx, cx, cy, cw, ch, cr) {
         ctx.save();
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
-        ctx.shadowBlur = 14;
-        ctx.shadowOffsetY = 5;
 
-        // Outer camera module plate
+        // 1. 3D Raised Pro Camera Protection Bump contour on the case
         ctx.beginPath();
         drawRoundedRect(ctx, cx, cy, cw, ch, cr);
-        const bezelGrad = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
-        bezelGrad.addColorStop(0, '#2d3748');
-        bezelGrad.addColorStop(0.5, '#1e293b');
-        bezelGrad.addColorStop(1, '#0f172a');
-        ctx.fillStyle = bezelGrad;
-        ctx.fill();
-        ctx.shadowColor = 'transparent';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
 
-        // Inner camera plate surface
+        ctx.beginPath();
+        drawRoundedRect(ctx, cx - 1, cy - 1, cw + 2, ch + 2, cr + 1);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Inner debossed bevel line of Pro Camera bump
         const m = 3;
         ctx.beginPath();
         drawRoundedRect(ctx, cx + m, cy + m, cw - m * 2, ch - m * 2, cr - 3);
-        const surfGrad = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
-        surfGrad.addColorStop(0, '#1e293b');
-        surfGrad.addColorStop(1, '#0b0f19');
-        ctx.fillStyle = surfGrad;
-        ctx.fill();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
-        // === Left Column: 2 Lenses stacked vertically ===
-        const lensColX = cx + 44;
+        // === 2. Individual Lens/Sensor optics under cutouts + Case Bezel Lips ===
 
-        // Main 50MP Lens (top left)
-        const mainY = cy + 42;
-        const mainR = 26;
+        // --- Main 50MP Lens (top left) ---
+        const lx1 = cx + 44, ly1 = cy + 42, lr1 = 24;
+        ctx.save();
         ctx.beginPath();
-        ctx.arc(lensColX, mainY, mainR + 3, 0, Math.PI * 2);
-        const mainRingGrad = ctx.createLinearGradient(lensColX - mainR, mainY - mainR, lensColX + mainR, mainY + mainR);
-        mainRingGrad.addColorStop(0, '#e2e8f0');
-        mainRingGrad.addColorStop(0.5, '#64748b');
-        mainRingGrad.addColorStop(1, '#1e293b');
-        ctx.fillStyle = mainRingGrad;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(lensColX, mainY, mainR, 0, Math.PI * 2);
+        ctx.arc(lx1, ly1, lr1, 0, Math.PI * 2);
         ctx.fillStyle = '#080c14';
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(lensColX, mainY, 13, 0, Math.PI * 2);
-        const mainOptics = ctx.createRadialGradient(lensColX - 4, mainY - 4, 1, lensColX, mainY, 13);
+        ctx.arc(lx1, ly1, 13, 0, Math.PI * 2);
+        const mainOptics = ctx.createRadialGradient(lx1 - 4, ly1 - 4, 1, lx1, ly1, 13);
         mainOptics.addColorStop(0, '#38bdf8');
         mainOptics.addColorStop(0.6, '#1e1b4b');
         mainOptics.addColorStop(1, '#020617');
@@ -1146,59 +1137,73 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(lensColX - 4, mainY - 4, 3, 0, Math.PI * 2);
+        ctx.arc(lx1 - 4, ly1 - 4, 3, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.fill();
+        ctx.restore();
 
-        // Depth Lens (bottom left)
-        const depthY = cy + 102;
-        const depthR = 18;
+        // 3D Lip Ring on case around Main Lens
         ctx.beginPath();
-        ctx.arc(lensColX, depthY, depthR + 2, 0, Math.PI * 2);
-        const depthRingGrad = ctx.createLinearGradient(lensColX - depthR, depthY - depthR, lensColX + depthR, depthY + depthR);
-        depthRingGrad.addColorStop(0, '#94a3b8');
-        depthRingGrad.addColorStop(1, '#334155');
-        ctx.fillStyle = depthRingGrad;
-        ctx.fill();
+        ctx.arc(lx1, ly1, lr1 + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
+        // --- Depth Lens (bottom left) ---
+        const lx2 = cx + 44, ly2 = cy + 102, lr2 = 18;
+        ctx.save();
         ctx.beginPath();
-        ctx.arc(lensColX, depthY, depthR, 0, Math.PI * 2);
+        ctx.arc(lx2, ly2, lr2, 0, Math.PI * 2);
         ctx.fillStyle = '#080c14';
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(lensColX, depthY, 8, 0, Math.PI * 2);
-        const depthOptics = ctx.createRadialGradient(lensColX - 2, depthY - 2, 1, lensColX, depthY, 8);
+        ctx.arc(lx2, ly2, 8, 0, Math.PI * 2);
+        const depthOptics = ctx.createRadialGradient(lx2 - 2, ly2 - 2, 1, lx2, ly2, 8);
         depthOptics.addColorStop(0, '#67e8f9');
         depthOptics.addColorStop(0.6, '#1e1b4b');
         depthOptics.addColorStop(1, '#020617');
         ctx.fillStyle = depthOptics;
         ctx.fill();
+        ctx.restore();
 
-        // === Right Column: Flash + Fingerprint Sensor Cutout ===
-        const rightColX = cx + 110;
-
-        // LED Flash (top right)
-        const flashY = cy + 42;
+        // 3D Lip Ring on case around Depth Lens
         ctx.beginPath();
-        ctx.arc(rightColX, flashY, 9, 0, Math.PI * 2);
+        ctx.arc(lx2, ly2, lr2 + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // --- LED Flash (top right) ---
+        const fx = cx + 110, fy = cy + 42, fr = 9;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(fx, fy, fr, 0, Math.PI * 2);
+        ctx.fillStyle = '#080c14';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(fx, fy, 6, 0, Math.PI * 2);
         ctx.fillStyle = '#fef08a';
         ctx.shadowColor = '#fef08a';
         ctx.shadowBlur = 8;
         ctx.fill();
         ctx.shadowColor = 'transparent';
+        ctx.restore();
 
-        // Fingerprint Sensor Cutout (bottom right)
-        const fpY = cy + 96;
-        const fpR = 21;
+        // 3D Lip Ring on case around Flash
         ctx.beginPath();
-        ctx.arc(rightColX, fpY, fpR + 2, 0, Math.PI * 2);
-        ctx.fillStyle = '#475569';
-        ctx.fill();
+        ctx.arc(fx, fy, fr + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
+        // --- Fingerprint Sensor Cutout (bottom right) ---
+        const fpx = cx + 110, fpy = cy + 96, fpr = 21;
+        ctx.save();
         ctx.beginPath();
-        ctx.arc(rightColX, fpY, fpR, 0, Math.PI * 2);
-        const fpGrad = ctx.createRadialGradient(rightColX, fpY, 2, rightColX, fpY, fpR);
+        ctx.arc(fpx, fpy, fpr, 0, Math.PI * 2);
+        const fpGrad = ctx.createRadialGradient(fpx, fpy, 2, fpx, fpy, fpr);
         fpGrad.addColorStop(0, '#334155');
         fpGrad.addColorStop(1, '#0f172a');
         ctx.fillStyle = fpGrad;
@@ -1209,68 +1214,50 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.lineWidth = 0.8;
         for (let r = 5; r <= 15; r += 4) {
             ctx.beginPath();
-            ctx.arc(rightColX, fpY, r, 0, Math.PI * 2);
+            ctx.arc(fpx, fpy, r, 0, Math.PI * 2);
             ctx.stroke();
         }
+        ctx.restore();
 
-        // Subtitle text inside module
-        ctx.font = '600 7px Outfit, sans-serif';
-        ctx.fillStyle = '#64748b';
-        ctx.textAlign = 'center';
-        ctx.fillText('50MP AI', cx + cw / 2, cy + ch - 8);
+        // 3D Lip Ring on case around Fingerprint sensor
+        ctx.beginPath();
+        ctx.arc(fpx, fpy, fpr + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
         ctx.restore();
     }
 
-    // POCO M6 Pro Camera Island (Squaricle case module containing 2 large lenses, 1 macro lens, 1 flash ring)
+    // POCO M6 Pro Softcase Pro Camera (Raised 3D camera protection bump on case + 4 precision circular lens cutouts)
     function drawPocoM6ProCameraIsland(ctx, cx, cy, cw, ch, cr) {
         ctx.save();
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 16;
-        ctx.shadowOffsetY = 6;
 
-        // Outer metallic camera module plate
+        // 1. 3D Raised Pro Camera Protection Frame contour on case
         ctx.beginPath();
         drawRoundedRect(ctx, cx, cy, cw, ch, cr);
-        const plateBez = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
-        plateBez.addColorStop(0, '#374151');
-        plateBez.addColorStop(0.5, '#1f2937');
-        plateBez.addColorStop(1, '#111827');
-        ctx.fillStyle = plateBez;
-        ctx.fill();
-        ctx.shadowColor = 'transparent';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
 
-        // Inner camera plate surface
+        ctx.beginPath();
+        drawRoundedRect(ctx, cx - 1, cy - 1, cw + 2, ch + 2, cr + 1);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
         const m = 3;
         ctx.beginPath();
         drawRoundedRect(ctx, cx + m, cy + m, cw - m * 2, ch - m * 2, cr - 3);
-        const plateSurf = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
-        plateSurf.addColorStop(0, '#1f2937');
-        plateSurf.addColorStop(1, '#090d16');
-        ctx.fillStyle = plateSurf;
-        ctx.fill();
-
-        // Metallic accent border
-        ctx.beginPath();
-        drawRoundedRect(ctx, cx + m, cy + m, cw - m * 2, ch - m * 2, cr - 3);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.18)';
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // === Top-Left: Main 64MP OIS Camera Lens (Large) ===
-        const lx1 = cx + 46;
-        const ly1 = cy + 46;
-        const lr1 = 28;
+        // === 2. Individual Lens optics under cutouts + Protective Bezel Rings ===
 
-        ctx.beginPath();
-        ctx.arc(lx1, ly1, lr1 + 3, 0, Math.PI * 2);
-        const ringGrad1 = ctx.createLinearGradient(lx1 - lr1, ly1 - lr1, lx1 + lr1, ly1 + lr1);
-        ringGrad1.addColorStop(0, '#e2e8f0');
-        ringGrad1.addColorStop(0.5, '#64748b');
-        ringGrad1.addColorStop(1, '#1e293b');
-        ctx.fillStyle = ringGrad1;
-        ctx.fill();
-
+        // --- Main 64MP OIS Camera Lens (Top-Left) ---
+        const lx1 = cx + 46, ly1 = cy + 46, lr1 = 28;
+        ctx.save();
         ctx.beginPath();
         ctx.arc(lx1, ly1, lr1, 0, Math.PI * 2);
         ctx.fillStyle = '#070a12';
@@ -1289,21 +1276,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.arc(lx1 - 5, ly1 - 5, 3, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.fill();
+        ctx.restore();
 
-        // === Bottom-Left: Ultra-wide Camera Lens (Large) ===
-        const lx2 = cx + 46;
-        const ly2 = cy + 112;
-        const lr2 = 26;
-
+        // Protective Metal Bezel Ring on case
         ctx.beginPath();
-        ctx.arc(lx2, ly2, lr2 + 3, 0, Math.PI * 2);
-        const ringGrad2 = ctx.createLinearGradient(lx2 - lr2, ly2 - lr2, lx2 + lr2, ly2 + lr2);
-        ringGrad2.addColorStop(0, '#cbd5e1');
-        ringGrad2.addColorStop(0.5, '#475569');
-        ringGrad2.addColorStop(1, '#0f172a');
-        ctx.fillStyle = ringGrad2;
-        ctx.fill();
+        ctx.arc(lx1, ly1, lr1 + 1.5, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
 
+        // --- Ultra-wide Camera Lens (Bottom-Left) ---
+        const lx2 = cx + 46, ly2 = cy + 112, lr2 = 26;
+        ctx.save();
         ctx.beginPath();
         ctx.arc(lx2, ly2, lr2, 0, Math.PI * 2);
         ctx.fillStyle = '#070a12';
@@ -1322,17 +1306,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.arc(lx2 - 4, ly2 - 4, 3, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
         ctx.fill();
+        ctx.restore();
 
-        // === Top-Right: Macro Camera Lens (Small) ===
-        const lx3 = cx + 112;
-        const ly3 = cy + 44;
-        const lr3 = 16;
-
+        // Protective Metal Bezel Ring on case
         ctx.beginPath();
-        ctx.arc(lx3, ly3, lr3 + 2, 0, Math.PI * 2);
-        ctx.fillStyle = '#475569';
-        ctx.fill();
+        ctx.arc(lx2, ly2, lr2 + 1.5, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
 
+        // --- Macro Camera Lens (Top-Right) ---
+        const lx3 = cx + 112, ly3 = cy + 44, lr3 = 16;
+        ctx.save();
         ctx.beginPath();
         ctx.arc(lx3, ly3, lr3, 0, Math.PI * 2);
         ctx.fillStyle = '#070a12';
@@ -1342,17 +1327,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.arc(lx3, ly3, 8, 0, Math.PI * 2);
         ctx.fillStyle = '#1e1b4b';
         ctx.fill();
+        ctx.restore();
 
-        // === Bottom-Right: Flash LED Ring ===
-        const fx = cx + 112;
-        const fy = cy + 112;
-        const fr = 15;
-
+        // Bezel Ring on case
         ctx.beginPath();
-        ctx.arc(fx, fy, fr + 2, 0, Math.PI * 2);
-        ctx.fillStyle = '#334155';
-        ctx.fill();
+        ctx.arc(lx3, ly3, lr3 + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
+        // --- Flash LED Ring (Bottom-Right) ---
+        const fx = cx + 112, fy = cy + 112, fr = 15;
+        ctx.save();
         ctx.beginPath();
         ctx.arc(fx, fy, fr, 0, Math.PI * 2);
         ctx.fillStyle = '#070a12';
@@ -1365,12 +1351,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.shadowBlur = 8;
         ctx.fill();
         ctx.shadowColor = 'transparent';
+        ctx.restore();
 
-        // Module text
-        ctx.font = '700 8px Outfit, sans-serif';
-        ctx.fillStyle = '#64748b';
-        ctx.textAlign = 'center';
-        ctx.fillText('64MP OIS', cx + cw / 2, cy + ch - 9);
+        // Flash Bezel Ring on case
+        ctx.beginPath();
+        ctx.arc(fx, fy, fr + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
         ctx.restore();
     }
