@@ -1172,36 +1172,44 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.save();
         ctx.beginPath();
         ctx.arc(aix, aiy, air, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-        ctx.lineWidth = 1;
+        ctx.fillStyle = '#080c14';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.2;
         ctx.stroke();
 
-        ctx.font = '600 8px Outfit, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.font = '700 8px Outfit, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
         ctx.textAlign = 'center';
         ctx.fillText('AI', aix, aiy + 3);
         ctx.restore();
 
         // White Flash LED (Middle Right)
-        const fx = cx + 62, fy = cy + 75, fr = 7;
+        const fx = cx + 62, fy = cy + 75, fr = 8;
         ctx.save();
         ctx.beginPath();
         ctx.arc(fx, fy, fr, 0, Math.PI * 2);
-        const flashGrad = ctx.createRadialGradient(fx - 2, fy - 2, 1, fx, fy, fr);
+        ctx.fillStyle = '#080c14';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(fx, fy, 6, 0, Math.PI * 2);
+        const flashGrad = ctx.createRadialGradient(fx - 2, fy - 2, 1, fx, fy, 6);
         flashGrad.addColorStop(0, '#ffffff');
         flashGrad.addColorStop(0.6, '#f1f5f9');
-        flashGrad.addColorStop(1, '#94a3b8');
+        flashGrad.addColorStop(1, '#cbd5e1');
         ctx.fillStyle = flashGrad;
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-        ctx.shadowBlur = 6;
+        flashGrad.addColorStop(0, '#ffffff');
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
+        ctx.shadowBlur = 8;
         ctx.fill();
         ctx.shadowColor = 'transparent';
         ctx.restore();
 
         ctx.beginPath();
-        ctx.arc(fx, fy, fr + 0.8, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1;
+        ctx.arc(fx, fy, fr + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.2;
         ctx.stroke();
 
         // --- BOTTOM CAMERA LENS (inside black pill) ---
