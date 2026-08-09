@@ -802,16 +802,16 @@ document.addEventListener('DOMContentLoaded', () => {
             drawCircleCounterClockwise(ctx, rX, y + 70, 18);
             drawCircleCounterClockwise(ctx, rX, y + 135, 18);
         } else if (phone.cameraStyle === 'redmi_12c_square') {
-            // Redmi 12C: square rounded module top-left
-            const camW = 140, camH = 140, camR = 28;
+            // Redmi 12C: rounded squaricle case cutout (2 vertical lenses + flash + fingerprint)
+            const camW = 156, camH = 145, camR = 30;
             const camX = x + 20;
             const camY = y + 24;
             drawRoundedRectPathCounterClockwise(ctx, camX, camY, camW, camH, camR);
         } else if (phone.cameraStyle === 'poco_m6_pro_dual') {
-            // POCO M6 Pro: segmented top half with floating lenses
-            const camW = w, camH = h * 0.42, camR = 0;
-            const camX = x;
-            const camY = y;
+            // POCO M6 Pro: squaricle case cutout for 4-element camera module
+            const camW = 160, camH = 160, camR = 32;
+            const camX = x + 20;
+            const camY = y + 24;
             drawRoundedRectPathCounterClockwise(ctx, camX, camY, camW, camH, camR);
         }
     }
@@ -841,12 +841,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const camY = y + 24;
             drawXiaomi14CameraIsland(ctx, camX, camY, camW, camH, camR);
         } else if (phone.cameraStyle === 'redmi_12c_square') {
-            const camW = 140, camH = 140, camR = 28;
+            const camW = 156, camH = 145, camR = 30;
             const camX = x + 20;
             const camY = y + 24;
-            drawRedmi12CCameraIsland(ctx, camX, camY, camW, camH, camR, x, y, w);
+            drawRedmi12CCameraIsland(ctx, camX, camY, camW, camH, camR);
         } else if (phone.cameraStyle === 'poco_m6_pro_dual') {
-            drawPocoM6ProCameraIsland(ctx, x, y, w, h);
+            const camW = 160, camH = 160, camR = 32;
+            const camX = x + 20;
+            const camY = y + 24;
+            drawPocoM6ProCameraIsland(ctx, camX, camY, camW, camH, camR);
         }
     }
 
@@ -1085,40 +1088,40 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
     }
 
-    // Redmi 12C Camera Island (Square rounded module, top-left, dual camera + flash + fingerprint)
-    function drawRedmi12CCameraIsland(ctx, cx, cy, cw, ch, cr, phoneX, phoneY, phoneW) {
+    // Redmi 12C Camera Island (Squaricle case module containing 2 vertical lenses, flash, fingerprint sensor)
+    function drawRedmi12CCameraIsland(ctx, cx, cy, cw, ch, cr) {
         ctx.save();
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
         ctx.shadowBlur = 14;
         ctx.shadowOffsetY = 5;
 
-        // Outer module bezel
+        // Outer camera module plate
         ctx.beginPath();
         drawRoundedRect(ctx, cx, cy, cw, ch, cr);
         const bezelGrad = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
         bezelGrad.addColorStop(0, '#2d3748');
-        bezelGrad.addColorStop(0.5, '#1a202c');
-        bezelGrad.addColorStop(1, '#0f1521');
+        bezelGrad.addColorStop(0.5, '#1e293b');
+        bezelGrad.addColorStop(1, '#0f172a');
         ctx.fillStyle = bezelGrad;
         ctx.fill();
         ctx.shadowColor = 'transparent';
 
-        // Inner module surface
-        const m = 4;
+        // Inner camera plate surface
+        const m = 3;
         ctx.beginPath();
         drawRoundedRect(ctx, cx + m, cy + m, cw - m * 2, ch - m * 2, cr - 3);
         const surfGrad = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
-        surfGrad.addColorStop(0, '#1a202c');
-        surfGrad.addColorStop(1, '#0d1117');
+        surfGrad.addColorStop(0, '#1e293b');
+        surfGrad.addColorStop(1, '#0b0f19');
         ctx.fillStyle = surfGrad;
         ctx.fill();
 
-        // === Left column: 2 lenses stacked vertically ===
-        const lensColX = cx + 46;
+        // === Left Column: 2 Lenses stacked vertically ===
+        const lensColX = cx + 44;
 
-        // Main camera (50MP) - top lens, large
-        const mainY = cy + 44;
-        const mainR = 28;
+        // Main 50MP Lens (top left)
+        const mainY = cy + 42;
+        const mainR = 26;
         ctx.beginPath();
         ctx.arc(lensColX, mainY, mainR + 3, 0, Math.PI * 2);
         const mainRingGrad = ctx.createLinearGradient(lensColX - mainR, mainY - mainR, lensColX + mainR, mainY + mainR);
@@ -1134,8 +1137,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(lensColX, mainY, 14, 0, Math.PI * 2);
-        const mainOptics = ctx.createRadialGradient(lensColX - 4, mainY - 4, 1, lensColX, mainY, 14);
+        ctx.arc(lensColX, mainY, 13, 0, Math.PI * 2);
+        const mainOptics = ctx.createRadialGradient(lensColX - 4, mainY - 4, 1, lensColX, mainY, 13);
         mainOptics.addColorStop(0, '#38bdf8');
         mainOptics.addColorStop(0.6, '#1e1b4b');
         mainOptics.addColorStop(1, '#020617');
@@ -1143,12 +1146,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(lensColX - 5, mainY - 5, 3, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.arc(lensColX - 4, mainY - 4, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.fill();
 
-        // Depth sensor - bottom lens, smaller
-        const depthY = cy + 100;
+        // Depth Lens (bottom left)
+        const depthY = cy + 102;
         const depthR = 18;
         ctx.beginPath();
         ctx.arc(lensColX, depthY, depthR + 2, 0, Math.PI * 2);
@@ -1164,242 +1167,210 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(lensColX, depthY, 9, 0, Math.PI * 2);
-        const depthOptics = ctx.createRadialGradient(lensColX - 2, depthY - 2, 1, lensColX, depthY, 9);
+        ctx.arc(lensColX, depthY, 8, 0, Math.PI * 2);
+        const depthOptics = ctx.createRadialGradient(lensColX - 2, depthY - 2, 1, lensColX, depthY, 8);
         depthOptics.addColorStop(0, '#67e8f9');
         depthOptics.addColorStop(0.6, '#1e1b4b');
         depthOptics.addColorStop(1, '#020617');
         ctx.fillStyle = depthOptics;
         ctx.fill();
 
-        // === Right column: flash + AI text ===
-        const rightColX = cx + 105;
+        // === Right Column: Flash + Fingerprint Sensor Cutout ===
+        const rightColX = cx + 110;
 
-        // LED Flash
-        const flashY = cy + 44;
+        // LED Flash (top right)
+        const flashY = cy + 42;
         ctx.beginPath();
         ctx.arc(rightColX, flashY, 9, 0, Math.PI * 2);
         ctx.fillStyle = '#fef08a';
         ctx.shadowColor = '#fef08a';
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 8;
         ctx.fill();
         ctx.shadowColor = 'transparent';
-        ctx.shadowBlur = 0;
 
-        // AI cam text
-        ctx.font = '600 8px Outfit, sans-serif';
-        ctx.fillStyle = '#64748b';
-        ctx.textAlign = 'center';
-        ctx.fillText('AI', rightColX, flashY + 30);
-
-        // "Redmi" branding text inside module (top right)
-        ctx.font = '600 10px Outfit, sans-serif';
-        ctx.fillStyle = '#4a5568';
-        ctx.textAlign = 'right';
-        ctx.fillText('Redmi', cx + cw - 14, cy + 20);
-
-        // === Fingerprint sensor (outside module, right side) ===
-        const fpX = cx + cw + 30;
-        const fpY = cy + 50;
-        const fpR = 18;
+        // Fingerprint Sensor Cutout (bottom right)
+        const fpY = cy + 96;
+        const fpR = 21;
+        ctx.beginPath();
+        ctx.arc(rightColX, fpY, fpR + 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#475569';
+        ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(fpX, fpY, fpR + 2, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(fpX, fpY, fpR, 0, Math.PI * 2);
-        const fpGrad = ctx.createRadialGradient(fpX, fpY, 2, fpX, fpY, fpR);
+        ctx.arc(rightColX, fpY, fpR, 0, Math.PI * 2);
+        const fpGrad = ctx.createRadialGradient(rightColX, fpY, 2, rightColX, fpY, fpR);
         fpGrad.addColorStop(0, '#334155');
-        fpGrad.addColorStop(1, '#1e293b');
+        fpGrad.addColorStop(1, '#0f172a');
         ctx.fillStyle = fpGrad;
         ctx.fill();
 
-        // Fingerprint ridges
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+        // Fingerprint ridge detail
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
         ctx.lineWidth = 0.8;
-        for (let i = 5; i <= 14; i += 3) {
+        for (let r = 5; r <= 15; r += 4) {
             ctx.beginPath();
-            ctx.arc(fpX, fpY, i, 0, Math.PI * 2);
+            ctx.arc(rightColX, fpY, r, 0, Math.PI * 2);
             ctx.stroke();
         }
+
+        // Subtitle text inside module
+        ctx.font = '600 7px Outfit, sans-serif';
+        ctx.fillStyle = '#64748b';
+        ctx.textAlign = 'center';
+        ctx.fillText('50MP AI', cx + cw / 2, cy + ch - 8);
 
         ctx.restore();
     }
 
-    // POCO M6 Pro Camera Island (Segmented glossy top half, 2 large + 1 small lens + flash)
-    function drawPocoM6ProCameraIsland(ctx, x, y, w, h) {
-        ctx.save();
-
-        const segH = h * 0.42; // Top segment height
-
-        // === Glossy dark top segment background ===
-        ctx.save();
-        ctx.beginPath();
-        // Top-left and top-right rounded, bottom straight
-        const segR = 20; // only top corners are rounded from phone body
-        ctx.moveTo(x + segR, y);
-        ctx.lineTo(x + w - segR, y);
-        ctx.arcTo(x + w, y, x + w, y + segR, segR);
-        ctx.lineTo(x + w, y + segH);
-        ctx.lineTo(x, y + segH);
-        ctx.lineTo(x, y + segR);
-        ctx.arcTo(x, y, x + segR, y, segR);
-        ctx.closePath();
-
-        const segGrad = ctx.createLinearGradient(x, y, x + w, y + segH);
-        segGrad.addColorStop(0, '#1c1f26');
-        segGrad.addColorStop(0.5, '#14171e');
-        segGrad.addColorStop(1, '#0c0e13');
-        ctx.fillStyle = segGrad;
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-        ctx.shadowBlur = 8;
-        ctx.shadowOffsetY = 3;
-        ctx.fill();
-        ctx.shadowColor = 'transparent';
-
-        // Subtle divider line at bottom of segment
-        ctx.beginPath();
-        ctx.moveTo(x + 12, y + segH);
-        ctx.lineTo(x + w - 12, y + segH);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.restore();
-
-        // === POCO branding (top right) ===
-        ctx.font = '700 13px Outfit, sans-serif';
-        ctx.fillStyle = '#64748b';
-        ctx.textAlign = 'right';
-        ctx.fillText('POCO', x + w - 28, y + 36);
-
-        // === Main camera (64MP OIS) - largest, top-left ===
-        const mainX = x + 75;
-        const mainY = y + 72;
-        const mainR = 42;
-
+    // POCO M6 Pro Camera Island (Squaricle case module containing 2 large lenses, 1 macro lens, 1 flash ring)
+    function drawPocoM6ProCameraIsland(ctx, cx, cy, cw, ch, cr) {
         ctx.save();
         ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
         ctx.shadowBlur = 16;
-        ctx.shadowOffsetY = 4;
+        ctx.shadowOffsetY = 6;
 
-        // Outer metallic ring
+        // Outer metallic camera module plate
         ctx.beginPath();
-        ctx.arc(mainX, mainY, mainR + 4, 0, Math.PI * 2);
-        const mainBez = ctx.createLinearGradient(mainX - mainR, mainY - mainR, mainX + mainR, mainY + mainR);
-        mainBez.addColorStop(0, '#4a5568');
-        mainBez.addColorStop(0.5, '#2d3748');
-        mainBez.addColorStop(1, '#1a202c');
-        ctx.fillStyle = mainBez;
-        ctx.fill();
-
-        // Lens body
-        ctx.beginPath();
-        ctx.arc(mainX, mainY, mainR, 0, Math.PI * 2);
-        ctx.fillStyle = '#080b12';
+        drawRoundedRect(ctx, cx, cy, cw, ch, cr);
+        const plateBez = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
+        plateBez.addColorStop(0, '#374151');
+        plateBez.addColorStop(0.5, '#1f2937');
+        plateBez.addColorStop(1, '#111827');
+        ctx.fillStyle = plateBez;
         ctx.fill();
         ctx.shadowColor = 'transparent';
 
-        // Inner optics
+        // Inner camera plate surface
+        const m = 3;
         ctx.beginPath();
-        ctx.arc(mainX, mainY, 20, 0, Math.PI * 2);
-        const mainOpt = ctx.createRadialGradient(mainX - 5, mainY - 5, 2, mainX, mainY, 20);
-        mainOpt.addColorStop(0, '#67e8f9');
-        mainOpt.addColorStop(0.4, '#1e1b4b');
-        mainOpt.addColorStop(1, '#020617');
-        ctx.fillStyle = mainOpt;
+        drawRoundedRect(ctx, cx + m, cy + m, cw - m * 2, ch - m * 2, cr - 3);
+        const plateSurf = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
+        plateSurf.addColorStop(0, '#1f2937');
+        plateSurf.addColorStop(1, '#090d16');
+        ctx.fillStyle = plateSurf;
         ctx.fill();
 
-        // Specular highlight
+        // Metallic accent border
         ctx.beginPath();
-        ctx.arc(mainX - 7, mainY - 7, 4, 0, Math.PI * 2);
+        drawRoundedRect(ctx, cx + m, cy + m, cw - m * 2, ch - m * 2, cr - 3);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // === Top-Left: Main 64MP OIS Camera Lens (Large) ===
+        const lx1 = cx + 46;
+        const ly1 = cy + 46;
+        const lr1 = 28;
+
+        ctx.beginPath();
+        ctx.arc(lx1, ly1, lr1 + 3, 0, Math.PI * 2);
+        const ringGrad1 = ctx.createLinearGradient(lx1 - lr1, ly1 - lr1, lx1 + lr1, ly1 + lr1);
+        ringGrad1.addColorStop(0, '#e2e8f0');
+        ringGrad1.addColorStop(0.5, '#64748b');
+        ringGrad1.addColorStop(1, '#1e293b');
+        ctx.fillStyle = ringGrad1;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(lx1, ly1, lr1, 0, Math.PI * 2);
+        ctx.fillStyle = '#070a12';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(lx1, ly1, 14, 0, Math.PI * 2);
+        const opt1 = ctx.createRadialGradient(lx1 - 4, ly1 - 4, 1, lx1, ly1, 14);
+        opt1.addColorStop(0, '#a78bfa');
+        opt1.addColorStop(0.5, '#1e1b4b');
+        opt1.addColorStop(1, '#020617');
+        ctx.fillStyle = opt1;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(lx1 - 5, ly1 - 5, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fill();
+
+        // === Bottom-Left: Ultra-wide Camera Lens (Large) ===
+        const lx2 = cx + 46;
+        const ly2 = cy + 112;
+        const lr2 = 26;
+
+        ctx.beginPath();
+        ctx.arc(lx2, ly2, lr2 + 3, 0, Math.PI * 2);
+        const ringGrad2 = ctx.createLinearGradient(lx2 - lr2, ly2 - lr2, lx2 + lr2, ly2 + lr2);
+        ringGrad2.addColorStop(0, '#cbd5e1');
+        ringGrad2.addColorStop(0.5, '#475569');
+        ringGrad2.addColorStop(1, '#0f172a');
+        ctx.fillStyle = ringGrad2;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(lx2, ly2, lr2, 0, Math.PI * 2);
+        ctx.fillStyle = '#070a12';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(lx2, ly2, 12, 0, Math.PI * 2);
+        const opt2 = ctx.createRadialGradient(lx2 - 3, ly2 - 3, 1, lx2, ly2, 12);
+        opt2.addColorStop(0, '#38bdf8');
+        opt2.addColorStop(0.5, '#1e1b4b');
+        opt2.addColorStop(1, '#020617');
+        ctx.fillStyle = opt2;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(lx2 - 4, ly2 - 4, 3, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
         ctx.fill();
-        ctx.restore();
 
-        // === Ultra-wide camera (8MP) - below main, also large ===
-        const ultraX = x + 75;
-        const ultraY = y + 180;
-        const ultraR = 36;
-
-        ctx.save();
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
-        ctx.shadowBlur = 14;
-        ctx.shadowOffsetY = 4;
+        // === Top-Right: Macro Camera Lens (Small) ===
+        const lx3 = cx + 112;
+        const ly3 = cy + 44;
+        const lr3 = 16;
 
         ctx.beginPath();
-        ctx.arc(ultraX, ultraY, ultraR + 3, 0, Math.PI * 2);
-        const ultraBez = ctx.createLinearGradient(ultraX - ultraR, ultraY - ultraR, ultraX + ultraR, ultraY + ultraR);
-        ultraBez.addColorStop(0, '#4a5568');
-        ultraBez.addColorStop(0.5, '#2d3748');
-        ultraBez.addColorStop(1, '#1a202c');
-        ctx.fillStyle = ultraBez;
+        ctx.arc(lx3, ly3, lr3 + 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#475569';
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(ultraX, ultraY, ultraR, 0, Math.PI * 2);
-        ctx.fillStyle = '#080b12';
-        ctx.fill();
-        ctx.shadowColor = 'transparent';
-
-        ctx.beginPath();
-        ctx.arc(ultraX, ultraY, 16, 0, Math.PI * 2);
-        const ultraOpt = ctx.createRadialGradient(ultraX - 4, ultraY - 4, 1, ultraX, ultraY, 16);
-        ultraOpt.addColorStop(0, '#a78bfa');
-        ultraOpt.addColorStop(0.5, '#1e1b4b');
-        ultraOpt.addColorStop(1, '#020617');
-        ctx.fillStyle = ultraOpt;
+        ctx.arc(lx3, ly3, lr3, 0, Math.PI * 2);
+        ctx.fillStyle = '#070a12';
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(ultraX - 5, ultraY - 5, 3, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-        ctx.fill();
-        ctx.restore();
-
-        // === Small camera (2MP macro) - top right ===
-        const smX = x + w - 80;
-        const smY = y + 68;
-        const smR = 20;
-
-        ctx.beginPath();
-        ctx.arc(smX, smY, smR + 2, 0, Math.PI * 2);
-        ctx.fillStyle = '#2d3748';
+        ctx.arc(lx3, ly3, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e1b4b';
         ctx.fill();
 
+        // === Bottom-Right: Flash LED Ring ===
+        const fx = cx + 112;
+        const fy = cy + 112;
+        const fr = 15;
+
         ctx.beginPath();
-        ctx.arc(smX, smY, smR, 0, Math.PI * 2);
-        ctx.fillStyle = '#080b12';
+        ctx.arc(fx, fy, fr + 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#334155';
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(smX, smY, 10, 0, Math.PI * 2);
-        const smOpt = ctx.createRadialGradient(smX - 2, smY - 2, 1, smX, smY, 10);
-        smOpt.addColorStop(0, '#67e8f9');
-        smOpt.addColorStop(0.6, '#1e1b4b');
-        smOpt.addColorStop(1, '#020617');
-        ctx.fillStyle = smOpt;
+        ctx.arc(fx, fy, fr, 0, Math.PI * 2);
+        ctx.fillStyle = '#070a12';
         ctx.fill();
 
-        // === LED Flash (right side, below small cam) ===
-        const flashX = x + w - 80;
-        const flashY = y + 140;
         ctx.beginPath();
-        ctx.arc(flashX, flashY, 10, 0, Math.PI * 2);
+        ctx.arc(fx, fy, 8, 0, Math.PI * 2);
         ctx.fillStyle = '#fef08a';
         ctx.shadowColor = '#fef08a';
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 8;
         ctx.fill();
         ctx.shadowColor = 'transparent';
-        ctx.shadowBlur = 0;
 
-        // "64MP OIS" text (next to flash)
-        ctx.font = '600 9px Outfit, sans-serif';
+        // Module text
+        ctx.font = '700 8px Outfit, sans-serif';
         ctx.fillStyle = '#64748b';
-        ctx.textAlign = 'left';
-        ctx.fillText('64MP OIS', flashX - 12, flashY + 28);
+        ctx.textAlign = 'center';
+        ctx.fillText('64MP OIS', cx + cw / 2, cy + ch - 9);
 
         ctx.restore();
     }
