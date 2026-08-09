@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://casefit-studio.vercel.app/sitemap.xml
+Sitemap: https://case-fit-studio.vercel.app/sitemap.xml
