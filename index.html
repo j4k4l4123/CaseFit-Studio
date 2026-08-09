@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaseFit Studio - Simulator Visualisasi Casing HP & Custom Gambar</title>
+    <meta name="description" content="Simulasi dan uji kecocokan gambar atau warna casing pada HP pilihanmu. Tampil sempurna khusus untuk POCO X7 Hijau dan smartphone impian lainnya.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Header Navigation -->
+        <header class="main-header">
+            <div class="logo-group">
+                <div class="logo-icon">
+                    <i data-lucide="smartphone"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>CaseFit <span>Studio</span></h1>
+                    <p>Visualizer Casing & Custom Design Smartphone</p>
+                </div>
+            </div>
+
+            <div class="header-featured-badge">
+                <span class="pulse-dot"></span>
+                <i data-lucide="sparkles" class="icon-sparkle"></i>
+                <span>Edisi Akurat: <strong>POCO X7 Hijau Mint</strong></span>
+            </div>
+
+            <div class="header-actions">
+                <button id="btnResetAll" class="btn btn-outline" title="Reset Semua Desain">
+                    <i data-lucide="rotate-ccw"></i> Reset
+                </button>
+                <button id="btnExport" class="btn btn-primary">
+                    <i data-lucide="download"></i> Download Hasil Mockup
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace-grid">
+
+            <!-- LEFT CONTROL PANEL (2 MANDATORY CORE SECTIONS) -->
+            <aside class="control-panel">
+                
+                <!-- SECTION 1: PILIH HP (PHONE SELECTION) -->
+                <section class="panel-section card-glass" id="sectionPhone">
+                    <div class="section-header">
+                        <div class="section-badge">1</div>
+                        <div>
+                            <h2>Pilih Smartphone</h2>
+                            <p>Tentukan tipe HP dan warna dasarnya</p>
+                        </div>
+                    </div>
+
+                    <!-- Phone Models Selector -->
+                    <div class="input-group">
+                        <label for="selectPhoneModel">Model HP Utama:</label>
+                        <div class="custom-select-wrapper">
+                            <select id="selectPhoneModel" class="form-control">
+                                <option value="poco_x7_green" selected>🔥 POCO X7 - Hijau Mint (Versi Akurat Original)</option>
+                                <option value="poco_x7_black">POCO X7 - Hitam Obsidian</option>
+                                <option value="poco_f6_yellow">POCO F6 - Kuning Racing Signature</option>
+                                <option value="iphone_16_titanium">iPhone 16 Pro Max - Natural Titanium</option>
+                                <option value="samsung_s25_gray">Samsung Galaxy S25 Ultra - Titanium Gray</option>
+                                <option value="xiaomi_14_green">Xiaomi 14 - Jade Green</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="select-arrow"></i>
+                        </div>
+                    </div>
+
+                    <!-- Selected Phone Detail Badge -->
+                    <div class="phone-info-card" id="phoneInfoCard">
+                        <div class="phone-color-dot" style="background: linear-gradient(135deg, #a7f3d0, #059669);"></div>
+                        <div class="phone-info-details">
+                            <h4 id="phoneInfoTitle">POCO X7 Hijau Mint</h4>
+                            <p id="phoneInfoSub">Body: Sage Mint Green Metallic | Camera Island: 4-Lens Squaricle Module</p>
+                        </div>
+                        <span class="badge-tag green">Pilihan Utama</span>
+                    </div>
+
+                    <!-- Quick Color Variation for Selected Phone Body -->
+                    <div class="input-group">
+                        <label>Ubah Warna Body HP Underneath:</label>
+                        <div class="color-presets-row" id="bodyColorPresets">
+                            <button class="color-chip active" data-color="#94d3ac" title="Hijau Mint POCO X7" style="background: #94d3ac;"></button>
+                            <button class="color-chip" data-color="#10B981" title="Cyber Green" style="background: #10B981;"></button>
+                            <button class="color-chip" data-color="#18181b" title="Hitam Matte" style="background: #18181b;"></button>
+                            <button class="color-chip" data-color="#eab308" title="Kuning POCO" style="background: #eab308;"></button>
+                            <button class="color-chip" data-color="#3b82f6" title="Biru Electric" style="background: #3b82f6;"></button>
+                            <button class="color-chip" data-color="#ec4899" title="Magenta Cyber" style="background: #ec4899;"></button>
+                            <input type="color" id="customBodyColor" value="#94d3ac" class="color-picker-input" title="Pilih Warna Custom">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: INPUT GAMBAR / CASING HP -->
+                <section class="panel-section card-glass" id="sectionCaseInput">
+                    <div class="section-header">
+                        <div class="section-badge">2</div>
+                        <div>
+                            <h2>Input Gambar & Casing HP</h2>
+                            <p>Upload gambar, atur warna, serta material casing</p>
+                        </div>
+                    </div>
+
+                    <!-- Sub Tab Switches for Case Customization -->
+                    <div class="sub-tabs">
+                        <button class="tab-btn active" data-tab="tabUpload">
+                            <i data-lucide="image"></i> Upload Gambar
+                        </button>
+                        <button class="tab-btn" data-tab="tabPresets">
+                            <i data-lucide="layout-grid"></i> Galeri Presets
+                        </button>
+                        <button class="tab-btn" data-tab="tabSolidColor">
+                            <i data-lucide="palette"></i> Warna Polos
+                        </button>
+                    </div>
+
+                    <!-- TAB 1: UPLOAD GAMBAR CUSTOM -->
+                    <div class="tab-content active" id="tabUpload">
+                        <div class="dropzone" id="dropzone">
+                            <input type="file" id="fileInput" accept="image/*" class="file-input-hidden">
+                            <div class="dropzone-content">
+                                <div class="dropzone-icon">
+                                    <i data-lucide="upload-cloud"></i>
+                                </div>
+                                <h3>Upload Gambar/Foto Kamu</h3>
+                                <p>Drag & drop file di sini atau <span>Klik untuk Jelajahi</span></p>
+                                <span class="file-types">Format: PNG, JPG, WEBP, SVG (Maks. 15MB)</span>
+                            </div>
+                        </div>
+
+                        <!-- Active Image Preview & Controls -->
+                        <div class="image-controls-group hidden" id="imageControlsGroup">
+                            <div class="active-image-info">
+                                <img id="activeImgThumb" src="" alt="Thumbnail Input">
+                                <div class="thumb-details">
+                                    <span class="file-name" id="fileNameText">custom-design.png</span>
+                                    <span class="file-status" id="fileStatusText">Selesai diunggah</span>
+                                </div>
+                                <button id="btnRemoveImage" class="btn-icon" title="Hapus Gambar">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+
+                            <!-- Image Positioning & Scale Sliders -->
+                            <div class="control-grid">
+                                <div class="slider-control">
+                                    <div class="slider-header">
+                                        <label for="sliderScale"><i data-lucide="maximize-2"></i> Ukuran / Zoom</label>
+                                        <span id="valScale">100%</span>
+                                    </div>
+                                    <input type="range" id="sliderScale" min="20" max="300" value="100">
+                                </div>
+
+                                <div class="slider-control">
+                                    <div class="slider-header">
+                                        <label for="sliderRotate"><i data-lucide="rotate-cw"></i> Rotasi Gambar</label>
+                                        <span id="valRotate">0°</span>
+                                    </div>
+                                    <input type="range" id="sliderRotate" min="-180" max="180" value="0">
+                                </div>
+
+                                <div class="slider-control">
+                                    <div class="slider-header">
+                                        <label for="sliderOpacity"><i data-lucide="eye"></i> Transparansi (Opacity)</label>
+                                        <span id="valOpacity">100%</span>
+                                    </div>
+                                    <input type="range" id="sliderOpacity" min="10" max="100" value="100">
+                                </div>
+
+                                <div class="slider-control">
+                                    <div class="slider-header">
+                                        <label for="selectBlend"><i data-lucide="layers"></i> Mode Blend Gambar</label>
+                                    </div>
+                                    <select id="selectBlend" class="form-control sm">
+                                        <option value="normal">Normal (Solid Print)</option>
+                                        <option value="multiply">Multiply (Blend ke Body Hijau HP)</option>
+                                        <option value="overlay">Overlay (Kontras Tekstur)</option>
+                                        <option value="screen">Screen (Efek Glow)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="quick-align-btns">
+                                <button id="btnCenterImage" class="btn btn-outline sm">
+                                    <i data-lucide="align-center"></i> Posisikan di Tengah
+                                </button>
+                                <button id="btnFitImage" class="btn btn-outline sm">
+                                    <i data-lucide="expand"></i> Penuhi Seluruh Casing
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: PRESET PATTERNS & DESAIN SAMPLE -->
+                    <div class="tab-content" id="tabPresets">
+                        <label>Pilih Motif & Wallpaper Eksklusif:</label>
+                        <div class="presets-grid">
+                            <div class="preset-card active" data-src="assets/cyber_pattern.jpg" data-title="Cyberpunk Neon">
+                                <img src="assets/cyber_pattern.jpg" alt="Cyberpunk Pattern">
+                                <span>Cyberpunk Neon</span>
+                            </div>
+                            <div class="preset-card" data-src="assets/wave_pattern.jpg" data-title="Great Wave Art">
+                                <img src="assets/wave_pattern.jpg" alt="Wave Pattern">
+                                <span>Great Wave Art</span>
+                            </div>
+                            <div class="preset-card" data-preset-type="carbon" data-title="Carbon Fiber 3D">
+                                <div class="preset-pattern-preview carbon-bg"></div>
+                                <span>Carbon Fiber 3D</span>
+                            </div>
+                            <div class="preset-card" data-preset-type="marble" data-title="Aesthetic Gold Marble">
+                                <div class="preset-pattern-preview marble-bg"></div>
+                                <span>Gold Marble</span>
+                            </div>
+                            <div class="preset-card" data-preset-type="anime" data-title="Anime Manga Screen">
+                                <div class="preset-pattern-preview anime-bg"></div>
+                                <span>Manga Lineart</span>
+                            </div>
+                            <div class="preset-card" data-preset-type="gradient" data-title="Aura Mesh Gradient">
+                                <div class="preset-pattern-preview gradient-bg"></div>
+                                <span>Aura Mesh</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: WARNA CASING POLOS (SOLID CASE) -->
+                    <div class="tab-content" id="tabSolidColor">
+                        <div class="input-group">
+                            <label>Pilih Warna Dasar Casing:</label>
+                            <div class="color-palette-grid">
+                                <button class="color-palette-item" data-case-color="#000000" style="background:#000000;">Hitam Matte</button>
+                                <button class="color-palette-item" data-case-color="#ffffff" style="background:#ffffff; color:#000;">Putih Soft</button>
+                                <button class="color-palette-item" data-case-color="#94d3ac" style="background:#94d3ac; color:#000;">Mint Green</button>
+                                <button class="color-palette-item" data-case-color="#3b82f6" style="background:#3b82f6;">Electric Blue</button>
+                                <button class="color-palette-item" data-case-color="#8b5cf6" style="background:#8b5cf6;">Deep Purple</button>
+                                <button class="color-palette-item" data-case-color="#f43f5e" style="background:#f43f5e;">Crimson Red</button>
+                                <button class="color-palette-item" data-case-color="#f59e0b" style="background:#f59e0b;">Amber Yellow</button>
+                                <button class="color-palette-item" data-case-color="#64748b" style="background:#64748b;">Slate Gray</button>
+                            </div>
+                            <div class="custom-color-picker-box">
+                                <label for="customCaseColor">Warna Custom Kustomisasi:</label>
+                                <div class="picker-input-group">
+                                    <input type="color" id="customCaseColor" value="#94d3ac">
+                                    <input type="text" id="customCaseColorHex" value="#94D3AC" class="form-control hex-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MATERIAL & TEXTURE FINISH SIMULATION -->
+                    <div class="material-selection-group">
+                        <label><i data-lucide="sparkle"></i> Jenis Material & Finish Casing:</label>
+                        <div class="material-options">
+                            <label class="material-chip active">
+                                <input type="radio" name="material" value="clear" checked>
+                                <span class="chip-content">
+                                    <i data-lucide="shield"></i>
+                                    <strong>Clear TPU (Transparan)</strong>
+                                    <small>Menampilkan warna dasar POCO X7 Hijau Mint</small>
+                                </span>
+                            </label>
+
+                            <label class="material-chip">
+                                <input type="radio" name="material" value="matte">
+                                <span class="chip-content">
+                                    <i data-lucide="square"></i>
+                                    <strong>Matte Hardcase</strong>
+                                    <small>Permukaan halus tanpa pantulan</small>
+                                </span>
+                            </label>
+
+                            <label class="material-chip">
+                                <input type="radio" name="material" value="glossy">
+                                <span class="chip-content">
+                                    <i data-lucide="sun"></i>
+                                    <strong>Tempered Glass (Glossy)</strong>
+                                    <small>Efek kilau kaca premium & elegan</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- CUSTOM TEXT OVERLAY -->
+                    <div class="custom-text-accordion">
+                        <div class="accordion-header" id="toggleTextAccordion">
+                            <div class="acc-title">
+                                <i data-lucide="type"></i>
+                                <span>Tambah Teks / Nama di Casing</span>
+                            </div>
+                            <i data-lucide="chevron-down" class="acc-icon"></i>
+                        </div>
+                        <div class="accordion-content hidden" id="textAccordionContent">
+                            <div class="input-group">
+                                <input type="text" id="inputCustomText" placeholder="Contoh: ALVIN / POCO USER" class="form-control">
+                            </div>
+                            <div class="control-grid-sm">
+                                <div>
+                                    <label>Font:</label>
+                                    <select id="selectTextFont" class="form-control sm">
+                                        <option value="Outfit">Outfit Bold</option>
+                                        <option value="Plus Jakarta Sans">Jakarta Sans</option>
+                                        <option value="Impact">Impact Cyber</option>
+                                        <option value="Courier New">Monospace Code</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Warna Teks:</label>
+                                    <input type="color" id="colorText" value="#ffffff" class="color-picker-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </aside>
+
+            <!-- RIGHT INTERACTIVE PREVIEW CANVAS & ANALYTICS -->
+            <section class="preview-stage">
+                
+                <!-- Stage Toolbar & View Options -->
+                <div class="stage-toolbar card-glass">
+                    <div class="view-toggle-group">
+                        <button class="view-btn active" id="btnViewBack" data-view="back">
+                            <i data-lucide="smartphone"></i> Tampilan Belakang (Casing)
+                        </button>
+                        <button class="view-btn" id="btnViewFront" data-view="front">
+                            <i data-lucide="smartphone-charging"></i> Tampilan Depan (Layar)
+                        </button>
+                    </div>
+
+                    <div class="lighting-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkGlassReflection" checked>
+                            <span class="slider-round"></span>
+                        </label>
+                        <span><i data-lucide="sparkles"></i> Pantulan Cahaya 3D</span>
+                    </div>
+
+                    <div class="zoom-controls">
+                        <button id="btnZoomOut" class="btn-icon sm" title="Zoom Out"><i data-lucide="zoom-out"></i></button>
+                        <span id="canvasZoomVal">100%</span>
+                        <button id="btnZoomIn" class="btn-icon sm" title="Zoom In"><i data-lucide="zoom-in"></i></button>
+                    </div>
+                </div>
+
+                <!-- Canvas Visualizer Container -->
+                <div class="canvas-viewport" id="canvasViewport">
+                    <div class="canvas-wrapper" id="canvasWrapper">
+                        <canvas id="phoneCanvas" width="700" height="1100"></canvas>
+                        
+                        <!-- Interactive Canvas Overlay Drag Hint -->
+                        <div class="canvas-drag-hint" id="canvasDragHint">
+                            <i data-lucide="move"></i> Drag / Geser di Canvas untuk mengatur posisi gambar
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM STATS & COLOR COMPATIBILITY SCORE CARD -->
+                <div class="compatibility-card card-glass">
+                    <div class="score-header">
+                        <div class="score-ring">
+                            <svg viewBox="0 0 36 36" class="circular-chart green">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" id="scoreCircle" stroke-dasharray="96, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage" id="scoreText">96%</text>
+                            </svg>
+                        </div>
+                        <div class="score-info">
+                            <div class="score-title-row">
+                                <h3 id="scoreStatusTitle">Sangat Cocok & Harmonis!</h3>
+                                <span class="badge-tag glow" id="scoreBadge">Aesthetic Match</span>
+                            </div>
+                            <p id="scoreDescription">
+                                Perpaduan gambar dengan body <strong>POCO X7 Hijau Mint</strong> menghasilkan kontras visual yang menonjol dan estetis.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="color-palette-breakdown">
+                        <span>Palet Warna Terdeteksi:</span>
+                        <div class="detected-colors" id="detectedColorsList">
+                            <div class="detected-color-swatch" style="background:#94d3ac;" title="POCO Mint Green Base"></div>
+                            <div class="detected-color-swatch" style="background:#a7f3d0;" title="Squaricle Camera Island"></div>
+                            <div class="detected-color-swatch" style="background:#111827;" title="Lens Ring Accent"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay hidden" id="exportModal">
+        <div class="modal-card card-glass">
+            <div class="modal-header">
+                <h3><i data-lucide="check-circle-2" class="icon-success"></i> Visualisasi Casing Selesai!</h3>
+                <button class="btn-icon" id="btnCloseModal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="export-preview-container">
+                    <img id="exportImgResult" src="" alt="Mockup Casing HP Final">
+                </div>
+                <div class="export-specs">
+                    <h4>Spesifikasi Kustomisasi:</h4>
+                    <ul>
+                        <li><strong>Model Smartphone:</strong> <span id="expPhoneModel">POCO X7 Hijau Mint</span></li>
+                        <li><strong>Tipe Casing & Material:</strong> <span id="expMaterial">Clear TPU (Transparan)</span></li>
+                        <li><strong>Tingkat Kecocokan Warna:</strong> <span id="expScore">96% Harmonis</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btnModalClose">Tutup</button>
+                <a id="btnDownloadLink" href="#" download="casing-poco-x7-custom.png" class="btn btn-primary">
+                    <i data-lucide="download"></i> Simpan Gambar High-Res (PNG)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
