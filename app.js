@@ -802,12 +802,14 @@ document.addEventListener('DOMContentLoaded', () => {
             drawCircleCounterClockwise(ctx, rX, y + 70, 18);
             drawCircleCounterClockwise(ctx, rX, y + 135, 18);
         } else if (phone.cameraStyle === 'redmi_12c_square') {
-            // Redmi 12C Softcase Pro Camera: EXACTLY 3 precision circular hole cutouts
+            // Redmi 12C: 2 large vertical camera circles, 2 small middle holes, 1 bottom-right circular element
             const camX = x + 20;
             const camY = y + 24;
-            drawCircleCounterClockwise(ctx, camX + 44, camY + 42, 24);  // 1. Main Lens Hole
-            drawCircleCounterClockwise(ctx, camX + 44, camY + 102, 18); // 2. Secondary Lens Hole
-            drawCircleCounterClockwise(ctx, camX + 110, camY + 72, 21);  // 3. Fingerprint Sensor Hole
+            drawCircleCounterClockwise(ctx, camX + 46, camY + 38, 25);   // 1. Top Large Camera Circle
+            drawCircleCounterClockwise(ctx, camX + 46, camY + 112, 25);  // 2. Bottom Large Camera Circle
+            drawCircleCounterClockwise(ctx, camX + 38, camY + 75, 6);    // 3. Middle Small Hole 1 (Flash)
+            drawCircleCounterClockwise(ctx, camX + 54, camY + 75, 5);    // 4. Middle Small Hole 2 (AI Sensor)
+            drawCircleCounterClockwise(ctx, camX + 110, camY + 112, 18); // 5. Bottom-Right Small Circular Element
         } else if (phone.cameraStyle === 'poco_m6_pro_dual') {
             // POCO M6 Pro Softcase Pro Camera: 4 precision circular hole cutouts
             const camX = x + 20;
@@ -1091,24 +1093,23 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
     }
 
-    // Redmi 12C Softcase Pro Camera (Raised 3D camera bump + EXACTLY 3 circular hole cutouts: Main Lens, Secondary Lens, Fingerprint)
+    // Redmi 12C Camera Island (Top-left module, 2 large vertical camera circles, 2 small middle holes, 1 bottom-right circular element)
     function drawRedmi12CCameraIsland(ctx, cx, cy, cw, ch, cr) {
         ctx.save();
 
-        // 1. 3D Raised Pro Camera Protection Bump contour on the case
+        // 1. 3D Raised Pro Camera Protection Bump contour on case
         ctx.beginPath();
         drawRoundedRect(ctx, cx, cy, cw, ch, cr);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
         ctx.lineWidth = 2.5;
         ctx.stroke();
 
         ctx.beginPath();
         drawRoundedRect(ctx, cx - 1, cy - 1, cw + 2, ch + 2, cr + 1);
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.38)';
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Inner debossed bevel line of Pro Camera bump
         const m = 3;
         ctx.beginPath();
         drawRoundedRect(ctx, cx + m, cy + m, cw - m * 2, ch - m * 2, cr - 3);
@@ -1116,10 +1117,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // === 2. EXACTLY 3 HOLES: Lenses & Fingerprint Sensor + 3D Case Bezel Lips ===
+        // === 2. LENSES & ELEMENTS ACCORDING TO REDMI 12C SPECS ===
 
-        // --- HOLE 1: Main 50MP Lens (top left) ---
-        const lx1 = cx + 44, ly1 = cy + 42, lr1 = 24;
+        // --- TOP LARGE CAMERA CIRCLE ---
+        const lx1 = cx + 46, ly1 = cy + 38, lr1 = 25;
         ctx.save();
         ctx.beginPath();
         ctx.arc(lx1, ly1, lr1, 0, Math.PI * 2);
@@ -1141,15 +1142,15 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
         ctx.restore();
 
-        // 3D Lip Ring on case around Main Lens Hole
+        // 3D Bezel Lip Ring around Top Large Camera Circle
         ctx.beginPath();
         ctx.arc(lx1, ly1, lr1 + 1, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
+        ctx.lineWidth = 2.2;
         ctx.stroke();
 
-        // --- HOLE 2: Secondary / Depth Lens (bottom left) ---
-        const lx2 = cx + 44, ly2 = cy + 102, lr2 = 18;
+        // --- BOTTOM LARGE CAMERA CIRCLE ---
+        const lx2 = cx + 46, ly2 = cy + 112, lr2 = 25;
         ctx.save();
         ctx.beginPath();
         ctx.arc(lx2, ly2, lr2, 0, Math.PI * 2);
@@ -1157,24 +1158,68 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(lx2, ly2, 8, 0, Math.PI * 2);
-        const depthOptics = ctx.createRadialGradient(lx2 - 2, ly2 - 2, 1, lx2, ly2, 8);
-        depthOptics.addColorStop(0, '#67e8f9');
-        depthOptics.addColorStop(0.6, '#1e1b4b');
-        depthOptics.addColorStop(1, '#020617');
-        ctx.fillStyle = depthOptics;
+        ctx.arc(lx2, ly2, 12, 0, Math.PI * 2);
+        const subOptics = ctx.createRadialGradient(lx2 - 3, ly2 - 3, 1, lx2, ly2, 12);
+        subOptics.addColorStop(0, '#67e8f9');
+        subOptics.addColorStop(0.6, '#1e1b4b');
+        subOptics.addColorStop(1, '#020617');
+        ctx.fillStyle = subOptics;
         ctx.fill();
         ctx.restore();
 
-        // 3D Lip Ring on case around Secondary Lens Hole
+        // 3D Bezel Lip Ring around Bottom Large Camera Circle
         ctx.beginPath();
         ctx.arc(lx2, ly2, lr2 + 1, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
+        ctx.lineWidth = 2.2;
         ctx.stroke();
 
-        // --- HOLE 3: Fingerprint Sensor Cutout (centered right) ---
-        const fpx = cx + 110, fpy = cy + 72, fpr = 21;
+        // --- TWO SMALL HOLES IN THE MIDDLE BETWEEN THE TWO LARGE CIRCLES ---
+        // Small hole 1: Flash LED
+        const mx1 = cx + 38, my = cy + 75, mr1 = 6;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(mx1, my, mr1, 0, Math.PI * 2);
+        ctx.fillStyle = '#080c14';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(mx1, my, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#fef08a';
+        ctx.shadowColor = '#fef08a';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.arc(mx1, my, mr1 + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Small hole 2: AI / Sensor Hole
+        const mx2 = cx + 54, mr2 = 5;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(mx2, my, mr2, 0, Math.PI * 2);
+        ctx.fillStyle = '#080c14';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(mx2, my, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e1b4b';
+        ctx.fill();
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.arc(mx2, my, mr2 + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // --- ONE SMALL CIRCULAR ELEMENT AT THE BOTTOM RIGHT SIDE ---
+        const fpx = cx + 110, fpy = cy + 112, fpr = 18;
         ctx.save();
         ctx.beginPath();
         ctx.arc(fpx, fpy, fpr, 0, Math.PI * 2);
@@ -1184,17 +1229,17 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = fpGrad;
         ctx.fill();
 
-        // Fingerprint ridge detail
+        // Subtle fingerprint ridges
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
         ctx.lineWidth = 0.8;
-        for (let r = 5; r <= 15; r += 4) {
+        for (let r = 4; r <= 13; r += 3) {
             ctx.beginPath();
             ctx.arc(fpx, fpy, r, 0, Math.PI * 2);
             ctx.stroke();
         }
         ctx.restore();
 
-        // 3D Lip Ring on case around Fingerprint sensor Hole
+        // 3D Bezel Lip Ring around bottom-right circular element
         ctx.beginPath();
         ctx.arc(fpx, fpy, fpr + 1, 0, Math.PI * 2);
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
@@ -1321,8 +1366,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ctx.beginPath();
         ctx.arc(fx, fy, 8, 0, Math.PI * 2);
-        ctx.fillStyle = '#fef08a';
-        ctx.shadowColor = '#fef08a';
+        const flashOpt = ctx.createRadialGradient(fx - 2, fy - 2, 1, fx, fy, 8);
+        flashOpt.addColorStop(0, '#ffffff');
+        flashOpt.addColorStop(0.5, '#f1f5f9');
+        flashOpt.addColorStop(1, '#cbd5e1');
+        ctx.fillStyle = flashOpt;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
         ctx.shadowBlur = 8;
         ctx.fill();
         ctx.shadowColor = 'transparent';
