@@ -72,18 +72,4 @@ Casing HP/
 
 ---
 
-## 🚀 Cara Menjalankan Aplikasi (Local Development)
-
-1. Buka terminal atau command prompt pada direktori proyek.
-2. Jalankan server HTTP lokal sederhana, contohnya dengan Python:
-   ```bash
-   python -m http.server 3000
-   ```
-3. Buka browser favoritmu dan akses:
-   ```text
-   http://localhost:3000
-   ```
-
----
-
 *Dikembangkan untuk memberikan pengalaman kustomisasi casing smartphone yang realistis, indah, dan presisi.*
