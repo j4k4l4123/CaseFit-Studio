@@ -162,6 +162,20 @@ document.addEventListener('DOMContentLoaded', () => {
             defaultColor: '#065f46',
             cameraStyle: 'xiaomi_leica',
             aspectRatio: { w: 330, h: 660, r: 38 }
+        },
+        redmi_12c_blue: {
+            name: 'Redmi 12C - Ocean Blue',
+            sub: 'Body: Deep Ocean Blue Matte | Camera Module: Dual Lens Pill Island',
+            defaultColor: '#1e3a5f',
+            cameraStyle: 'redmi_12c_pill',
+            aspectRatio: { w: 330, h: 680, r: 40 }
+        },
+        poco_m6_pro_black: {
+            name: 'POCO M6 Pro - Power Black',
+            sub: 'Body: Sleek Power Black | Camera Module: Triple Lens Segmented Island',
+            defaultColor: '#18181b',
+            cameraStyle: 'poco_m6_pro_segment',
+            aspectRatio: { w: 330, h: 670, r: 42 }
         }
     };
 
@@ -787,6 +801,18 @@ document.addEventListener('DOMContentLoaded', () => {
             drawCircleCounterClockwise(ctx, lX, y + 180, rad);
             drawCircleCounterClockwise(ctx, rX, y + 70, 18);
             drawCircleCounterClockwise(ctx, rX, y + 135, 18);
+        } else if (phone.cameraStyle === 'redmi_12c_pill') {
+            // Redmi 12C: pill-shaped camera island with fingerprint sensor
+            const camW = 110, camH = 180, camR = 55;
+            const camX = x + (w - camW) / 2;
+            const camY = y + 30;
+            drawRoundedRectPathCounterClockwise(ctx, camX, camY, camW, camH, camR);
+        } else if (phone.cameraStyle === 'poco_m6_pro_segment') {
+            // POCO M6 Pro: segmented top band camera
+            const camW = w - 20, camH = 130, camR = 26;
+            const camX = x + 10;
+            const camY = y + 16;
+            drawRoundedRectPathCounterClockwise(ctx, camX, camY, camW, camH, camR);
         }
     }
 
@@ -814,6 +840,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const camX = x + 24;
             const camY = y + 24;
             drawXiaomi14CameraIsland(ctx, camX, camY, camW, camH, camR);
+        } else if (phone.cameraStyle === 'redmi_12c_pill') {
+            const camW = 110, camH = 180, camR = 55;
+            const camX = x + (w - camW) / 2;
+            const camY = y + 30;
+            drawRedmi12CCameraIsland(ctx, camX, camY, camW, camH, camR);
+        } else if (phone.cameraStyle === 'poco_m6_pro_segment') {
+            const camW = w - 20, camH = 130, camR = 26;
+            const camX = x + 10;
+            const camY = y + 16;
+            drawPocoM6ProCameraIsland(ctx, camX, camY, camW, camH, camR);
         }
     }
 
@@ -1048,6 +1084,217 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.lineWidth = 2.5;
             ctx.stroke();
         });
+
+        ctx.restore();
+    }
+
+    // Redmi 12C Camera Island (Pill-shaped, dual camera + fingerprint sensor)
+    function drawRedmi12CCameraIsland(ctx, cx, cy, cw, ch, cr) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+        ctx.shadowBlur = 12;
+        ctx.shadowOffsetY = 4;
+
+        // Outer pill-shaped bezel
+        ctx.beginPath();
+        drawRoundedRect(ctx, cx, cy, cw, ch, cr);
+        const pillBezel = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
+        pillBezel.addColorStop(0, '#334155');
+        pillBezel.addColorStop(0.5, '#1e293b');
+        pillBezel.addColorStop(1, '#0f172a');
+        ctx.fillStyle = pillBezel;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+
+        // Inner surface
+        const margin = 4;
+        ctx.beginPath();
+        drawRoundedRect(ctx, cx + margin, cy + margin, cw - margin * 2, ch - margin * 2, cr - 4);
+        const pillSurf = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
+        pillSurf.addColorStop(0, '#1e293b');
+        pillSurf.addColorStop(1, '#0f172a');
+        ctx.fillStyle = pillSurf;
+        ctx.fill();
+
+        const centerX = cx + cw / 2;
+
+        // Main camera lens (50MP)
+        const mainY = cy + 52;
+        ctx.beginPath();
+        ctx.arc(centerX, mainY, 30, 0, Math.PI * 2);
+        const mainRingGrad = ctx.createLinearGradient(centerX - 30, mainY - 30, centerX + 30, mainY + 30);
+        mainRingGrad.addColorStop(0, '#ffffff');
+        mainRingGrad.addColorStop(0.5, '#9ca3af');
+        mainRingGrad.addColorStop(1, '#374151');
+        ctx.fillStyle = mainRingGrad;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(centerX, mainY, 26, 0, Math.PI * 2);
+        ctx.fillStyle = '#0b0f19';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(centerX, mainY, 14, 0, Math.PI * 2);
+        const opticsGrad = ctx.createRadialGradient(centerX - 4, mainY - 4, 1, centerX, mainY, 14);
+        opticsGrad.addColorStop(0, '#38bdf8');
+        opticsGrad.addColorStop(0.6, '#1e1b4b');
+        opticsGrad.addColorStop(1, '#020617');
+        ctx.fillStyle = opticsGrad;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(centerX - 5, mainY - 5, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fill();
+
+        // Depth sensor (smaller)
+        const subY = cy + 108;
+        ctx.beginPath();
+        ctx.arc(centerX, subY, 14, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e293b';
+        ctx.fill();
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(centerX, subY, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#020617';
+        ctx.fill();
+
+        // LED Flash
+        const flashY = cy + 140;
+        ctx.beginPath();
+        ctx.arc(centerX, flashY, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#fef08a';
+        ctx.shadowColor = '#fef08a';
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+
+        // "50MP AI" text
+        ctx.font = '700 7px Outfit, sans-serif';
+        ctx.fillStyle = '#64748b';
+        ctx.textAlign = 'center';
+        ctx.fillText('50MP AI', centerX, cy + ch - 12);
+
+        ctx.restore();
+    }
+
+    // POCO M6 Pro Camera Island (Segmented top band with triple camera)
+    function drawPocoM6ProCameraIsland(ctx, cx, cy, cw, ch, cr) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+        ctx.shadowBlur = 12;
+        ctx.shadowOffsetY = 4;
+
+        // Segmented top band background
+        ctx.beginPath();
+        drawRoundedRect(ctx, cx, cy, cw, ch, cr);
+        const bandGrad = ctx.createLinearGradient(cx, cy, cx + cw, cy + ch);
+        bandGrad.addColorStop(0, '#27272a');
+        bandGrad.addColorStop(0.5, '#18181b');
+        bandGrad.addColorStop(1, '#09090b');
+        ctx.fillStyle = bandGrad;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+
+        // Subtle segmented line
+        ctx.beginPath();
+        drawRoundedRect(ctx, cx, cy, cw, ch, cr);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Triple camera lenses positioned in a row
+        const lensY = cy + ch / 2 - 5;
+        const mainX = cx + 55;
+        const ultraX = cx + 130;
+        const macroX = cx + 195;
+
+        // Main camera (64MP OIS) - largest
+        ctx.beginPath();
+        ctx.arc(mainX, lensY, 32, 0, Math.PI * 2);
+        const mainRing = ctx.createLinearGradient(mainX - 32, lensY - 32, mainX + 32, lensY + 32);
+        mainRing.addColorStop(0, '#f59e0b');
+        mainRing.addColorStop(0.3, '#d97706');
+        mainRing.addColorStop(0.7, '#78716c');
+        mainRing.addColorStop(1, '#44403c');
+        ctx.fillStyle = mainRing;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(mainX, lensY, 28, 0, Math.PI * 2);
+        ctx.fillStyle = '#0b0f19';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(mainX, lensY, 15, 0, Math.PI * 2);
+        const mainOptics = ctx.createRadialGradient(mainX - 4, lensY - 4, 1, mainX, lensY, 15);
+        mainOptics.addColorStop(0, '#a78bfa');
+        mainOptics.addColorStop(0.5, '#1e1b4b');
+        mainOptics.addColorStop(1, '#020617');
+        ctx.fillStyle = mainOptics;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(mainX - 5, lensY - 5, 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fill();
+
+        // Ultra-wide camera (8MP)
+        ctx.beginPath();
+        ctx.arc(ultraX, lensY, 22, 0, Math.PI * 2);
+        const ultraRing = ctx.createLinearGradient(ultraX - 22, lensY - 22, ultraX + 22, lensY + 22);
+        ultraRing.addColorStop(0, '#a3a3a3');
+        ultraRing.addColorStop(1, '#404040');
+        ctx.fillStyle = ultraRing;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(ultraX, lensY, 18, 0, Math.PI * 2);
+        ctx.fillStyle = '#0b0f19';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(ultraX, lensY, 10, 0, Math.PI * 2);
+        const ultraOptics = ctx.createRadialGradient(ultraX - 3, lensY - 3, 1, ultraX, lensY, 10);
+        ultraOptics.addColorStop(0, '#67e8f9');
+        ultraOptics.addColorStop(0.6, '#1e1b4b');
+        ultraOptics.addColorStop(1, '#020617');
+        ctx.fillStyle = ultraOptics;
+        ctx.fill();
+
+        // Macro camera (2MP) - smallest
+        ctx.beginPath();
+        ctx.arc(macroX, lensY, 16, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e293b';
+        ctx.fill();
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(macroX, lensY, 9, 0, Math.PI * 2);
+        ctx.fillStyle = '#020617';
+        ctx.fill();
+
+        // LED Flash (next to macro)
+        const flashX = cx + cw - 40;
+        ctx.beginPath();
+        ctx.arc(flashX, lensY, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#fef08a';
+        ctx.shadowColor = '#fef08a';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+
+        // "64MP OIS" text
+        ctx.font = '700 8px Outfit, sans-serif';
+        ctx.fillStyle = '#64748b';
+        ctx.textAlign = 'center';
+        ctx.fillText('64MP OIS', cx + cw / 2, cy + ch - 10);
 
         ctx.restore();
     }
