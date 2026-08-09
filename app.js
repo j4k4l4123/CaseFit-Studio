@@ -802,13 +802,14 @@ document.addEventListener('DOMContentLoaded', () => {
             drawCircleCounterClockwise(ctx, rX, y + 70, 18);
             drawCircleCounterClockwise(ctx, rX, y + 135, 18);
         } else if (phone.cameraStyle === 'redmi_12c_square') {
-            // Redmi 12C: 4 precision circular case hole cutouts (Top Lens, Bottom Lens, Flash LED, Fingerprint Sensor)
+            // Redmi 12C: 5 precision circular case hole cutouts (Top Lens, AI Badge, Flash LED, Bottom Lens, Fingerprint Sensor)
             const camX = x + 20;
             const camY = y + 24;
             drawCircleCounterClockwise(ctx, camX + 46, camY + 42, 23);   // 1. Top Main Lens Hole
-            drawCircleCounterClockwise(ctx, camX + 46, camY + 103, 23);  // 2. Bottom Lens Hole
+            drawCircleCounterClockwise(ctx, camX + 32, camY + 72.5, 9.5); // 2. AI Badge Hole
             drawCircleCounterClockwise(ctx, camX + 60, camY + 72.5, 10); // 3. Flash LED Hole
-            drawCircleCounterClockwise(ctx, camX + 118, camY + 112, 18); // 4. Fingerprint Sensor Hole
+            drawCircleCounterClockwise(ctx, camX + 46, camY + 103, 23);  // 4. Bottom Secondary Lens Hole
+            drawCircleCounterClockwise(ctx, camX + 118, camY + 112, 18); // 5. Fingerprint Sensor Hole
         } else if (phone.cameraStyle === 'poco_m6_pro_dual') {
             // POCO M6 Pro Softcase Pro Camera: 4 precision circular hole cutouts
             const camX = x + 20;
@@ -1092,9 +1093,29 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
     }
 
-    // Redmi 12C 4-Hole Precision Casing Camera Module (Top Lens, Bottom Lens, Flash LED, Fingerprint Sensor)
+    // Redmi 12C 5-Hole Precision Casing Camera Module (Top Lens, AI Badge, Flash LED, Bottom Lens, Fingerprint Sensor)
     function drawRedmi12CCameraIsland(ctx, cx, cy, cw, ch, cr) {
         ctx.save();
+
+        // 1. 3D Raised Pro Camera Protection Frame contour on case (Matching POCO M6 Pro style)
+        ctx.beginPath();
+        drawRoundedRect(ctx, cx, cy, cw, ch, cr);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        drawRoundedRect(ctx, cx - 1, cy - 1, cw + 2, ch + 2, cr + 1);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const m = 3;
+        ctx.beginPath();
+        drawRoundedRect(ctx, cx + m, cy + m, cw - m * 2, ch - m * 2, cr - 3);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
         const pillX = cx + 10;
         const pillY = cy + 10;
@@ -1150,7 +1171,70 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
         ctx.restore();
 
-        // --- 2. BOTTOM CAMERA LENS (Hole #2: Secondary Sensor) ---
+        // --- 2. AI BADGE (Hole #2: Middle Left AI Icon) ---
+        const midY = pillY + pillH / 2; // cy + 72.5
+        const aix = pillX + 22; // cx + 32
+        const aiy = midY;
+        const air = 9.5;
+
+        ctx.save();
+        // 3D Bezel Ring around AI Hole on Case
+        ctx.beginPath();
+        ctx.arc(aix, aiy, air + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(aix, aiy, air, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        ctx.font = '700 9px Outfit, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('AI', aix, aiy + 0.5);
+        ctx.restore();
+
+        // --- 3. LED FLASH (Hole #3: Middle Right Flash LED) ---
+        const fx = pillX + pillW - 22; // cx + 60
+        const fy = midY;
+        const fr = 10;
+
+        ctx.save();
+        // 3D Bezel Ring around Flash Hole on Case
+        ctx.beginPath();
+        ctx.arc(fx, fy, fr + 1, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(fx, fy, fr, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(fx, fy, 7, 0, Math.PI * 2);
+        const flashGrad = ctx.createRadialGradient(fx - 2, fy - 2, 1, fx, fy, 7);
+        flashGrad.addColorStop(0, '#ffffff');
+        flashGrad.addColorStop(0.5, '#fff7ed');
+        flashGrad.addColorStop(1, '#e2e8f0');
+        ctx.fillStyle = flashGrad;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.restore();
+
+        // --- 4. BOTTOM CAMERA LENS (Hole #4: Secondary Sensor) ---
         const lx2 = pillX + pillW / 2; // cx + 46
         const ly2 = pillY + pillH - 32; // cy + 103
         const lr2 = 23;
@@ -1199,42 +1283,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
         ctx.restore();
 
-        // --- 3. LED FLASH (Hole #3: Middle Right Flash LED) ---
-        const midY = pillY + pillH / 2; // cy + 72.5
-        const fx = pillX + pillW - 22; // cx + 60
-        const fy = midY;
-        const fr = 10;
-
-        ctx.save();
-        // 3D Bezel Ring around Flash Hole on Case
-        ctx.beginPath();
-        ctx.arc(fx, fy, fr + 1, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(fx, fy, fr, 0, Math.PI * 2);
-        ctx.fillStyle = '#0f172a';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(fx, fy, 7, 0, Math.PI * 2);
-        const flashGrad = ctx.createRadialGradient(fx - 2, fy - 2, 1, fx, fy, 7);
-        flashGrad.addColorStop(0, '#ffffff');
-        flashGrad.addColorStop(0.5, '#fff7ed');
-        flashGrad.addColorStop(1, '#e2e8f0');
-        ctx.fillStyle = flashGrad;
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
-        ctx.shadowBlur = 6;
-        ctx.fill();
-        ctx.shadowColor = 'transparent';
-        ctx.restore();
-
-        // --- 4. FINGERPRINT SENSOR (Hole #4: Bottom Right) ---
+        // --- 5. FINGERPRINT SENSOR (Hole #5: Bottom Right) ---
         const fpx = cx + 118;
         const fpy = cy + 112;
         const fpr = 18;
