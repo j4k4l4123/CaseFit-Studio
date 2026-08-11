@@ -57,7 +57,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const chkGlassReflection = document.getElementById('chkGlassReflection');
     const btnZoomIn = document.getElementById('btnZoomIn');
     const btnZoomOut = document.getElementById('btnZoomOut');
+    const btnZoomReset = document.getElementById('btnZoomReset');
     const canvasZoomVal = document.getElementById('canvasZoomVal');
+    const canvasViewport = document.getElementById('canvasViewport');
+    const sliderViewportZoom = document.getElementById('sliderViewportZoom');
+    const viewportZoomChips = document.getElementById('viewportZoomChips');
+    const imgScaleChips = document.getElementById('imgScaleChips');
+
+    // Phone Orientation & Rotation Controls
+    const btnOrientPortrait = document.getElementById('btnOrientPortrait');
+    const btnOrientLandscape = document.getElementById('btnOrientLandscape');
+    const btnRotatePhoneCw = document.getElementById('btnRotatePhoneCw');
+    const btnRotatePhoneCcw = document.getElementById('btnRotatePhoneCcw');
+    const sliderPhoneRotate = document.getElementById('sliderPhoneRotate');
+    const valPhoneRotate = document.getElementById('valPhoneRotate');
+    const phoneAngleChips = document.getElementById('phoneAngleChips');
 
     // Action Buttons
     const btnResetAll = document.getElementById('btnResetAll');
@@ -113,10 +127,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Viewport Zoom
         viewportZoom: 1.0,
 
+        // Phone Orientation & Rotation Angle
+        phoneRotate: 0, // Angle in degrees (0 = Portrait, 90 = Landscape, 180, 270)
+
         // Dragging state on canvas
         isDragging: false,
-        dragStartX: 0,
-        dragStartY: 0
+        dragLastX: 0,
+        dragLastY: 0
     };
 
     // Database Tipe Phone lengkap
@@ -311,12 +328,35 @@ document.addEventListener('DOMContentLoaded', () => {
         updateScore();
     });
 
-    // Image Controls Sliders
+    // Image Controls Sliders & Scale Chips
     sliderScale.addEventListener('input', (e) => {
         state.imgScale = e.target.value / 100;
         valScale.textContent = `${e.target.value}%`;
+        syncImgScaleChips();
         renderCanvas();
     });
+
+    if (imgScaleChips) {
+        imgScaleChips.addEventListener('click', (e) => {
+            const btn = e.target.closest('.chip-preset-xs');
+            if (btn && btn.dataset.scale) {
+                const scaleVal = parseInt(btn.dataset.scale);
+                state.imgScale = scaleVal / 100;
+                sliderScale.value = scaleVal;
+                valScale.textContent = `${scaleVal}%`;
+                syncImgScaleChips();
+                renderCanvas();
+            }
+        });
+    }
+
+    function syncImgScaleChips() {
+        if (!imgScaleChips) return;
+        const currentPct = Math.round(state.imgScale * 100);
+        imgScaleChips.querySelectorAll('.chip-preset-xs').forEach(chip => {
+            chip.classList.toggle('active', parseInt(chip.dataset.scale) === currentPct);
+        });
+    }
 
     sliderRotate.addEventListener('input', (e) => {
         state.imgRotate = parseInt(e.target.value);
@@ -511,35 +551,139 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCanvas();
     });
 
-    // Zoom Controls
+    // Viewport Zoom Controls (Max 3.0x / 300% zoom)
     btnZoomIn.addEventListener('click', () => {
-        state.viewportZoom = Math.min(1.5, state.viewportZoom + 0.1);
+        state.viewportZoom = Math.min(3.0, Math.round((state.viewportZoom + 0.25) * 100) / 100);
         updateViewportZoom();
     });
 
     btnZoomOut.addEventListener('click', () => {
-        state.viewportZoom = Math.max(0.7, state.viewportZoom - 0.1);
+        state.viewportZoom = Math.max(0.5, Math.round((state.viewportZoom - 0.25) * 100) / 100);
         updateViewportZoom();
     });
 
-    function updateViewportZoom() {
-        canvasWrapper.style.transform = `scale(${state.viewportZoom})`;
-        canvasZoomVal.textContent = `${Math.round(state.viewportZoom * 100)}%`;
+    if (btnZoomReset) {
+        btnZoomReset.addEventListener('click', () => {
+            state.viewportZoom = 1.0;
+            updateViewportZoom();
+        });
     }
 
-    // Canvas Dragging
+    canvasZoomVal.addEventListener('click', () => {
+        state.viewportZoom = 1.0;
+        updateViewportZoom();
+    });
+
+    if (sliderViewportZoom) {
+        sliderViewportZoom.addEventListener('input', (e) => {
+            state.viewportZoom = parseFloat(e.target.value) / 100;
+            updateViewportZoom();
+        });
+    }
+
+    if (viewportZoomChips) {
+        viewportZoomChips.addEventListener('click', (e) => {
+            const btn = e.target.closest('.chip-preset-xs');
+            if (btn && btn.dataset.vzoom) {
+                state.viewportZoom = parseInt(btn.dataset.vzoom) / 100;
+                updateViewportZoom();
+            }
+        });
+    }
+
+    // Mouse Wheel Zoom on Preview Canvas Viewport
+    if (canvasViewport) {
+        canvasViewport.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.15 : -0.15;
+            state.viewportZoom = Math.min(3.0, Math.max(0.5, Math.round((state.viewportZoom + delta) * 100) / 100));
+            updateViewportZoom();
+        }, { passive: false });
+    }
+
+    function updateViewportZoom() {
+        state.viewportZoom = Math.min(3.0, Math.max(0.5, state.viewportZoom));
+        canvasWrapper.style.transform = `scale(${state.viewportZoom})`;
+        const pct = Math.round(state.viewportZoom * 100);
+        canvasZoomVal.textContent = `${pct}%`;
+        if (sliderViewportZoom) sliderViewportZoom.value = pct;
+        if (viewportZoomChips) {
+            viewportZoomChips.querySelectorAll('.chip-preset-xs').forEach(chip => {
+                chip.classList.toggle('active', parseInt(chip.dataset.vzoom) === pct);
+            });
+        }
+    }
+
+    // Phone Orientation & Rotation Angle Controls
+    function setPhoneRotation(angle) {
+        state.phoneRotate = ((angle % 360) + 360) % 360;
+        if (sliderPhoneRotate) sliderPhoneRotate.value = state.phoneRotate;
+        if (valPhoneRotate) valPhoneRotate.textContent = `${state.phoneRotate}°`;
+
+        if (btnOrientPortrait && btnOrientLandscape) {
+            btnOrientPortrait.classList.toggle('active', state.phoneRotate === 0);
+            btnOrientLandscape.classList.toggle('active', state.phoneRotate === 90);
+        }
+
+        if (phoneAngleChips) {
+            phoneAngleChips.querySelectorAll('.chip-preset-sm').forEach(chip => {
+                const chipAngle = parseInt(chip.dataset.angle);
+                chip.classList.toggle('active', chipAngle === state.phoneRotate);
+            });
+        }
+
+        renderCanvas();
+    }
+
+    if (btnOrientPortrait) {
+        btnOrientPortrait.addEventListener('click', () => setPhoneRotation(0));
+    }
+    if (btnOrientLandscape) {
+        btnOrientLandscape.addEventListener('click', () => setPhoneRotation(90));
+    }
+    if (btnRotatePhoneCw) {
+        btnRotatePhoneCw.addEventListener('click', () => setPhoneRotation(state.phoneRotate + 90));
+    }
+    if (btnRotatePhoneCcw) {
+        btnRotatePhoneCcw.addEventListener('click', () => setPhoneRotation(state.phoneRotate - 90));
+    }
+    if (sliderPhoneRotate) {
+        sliderPhoneRotate.addEventListener('input', (e) => setPhoneRotation(parseInt(e.target.value)));
+    }
+    if (phoneAngleChips) {
+        phoneAngleChips.addEventListener('click', (e) => {
+            const chip = e.target.closest('.chip-preset-sm');
+            if (chip && chip.dataset.angle !== undefined) {
+                setPhoneRotation(parseInt(chip.dataset.angle));
+            }
+        });
+    }
+
+    // Canvas Dragging with Orientation Support (Mouse & Touch)
+    let initialTouchDist = null;
+
     canvas.addEventListener('mousedown', (e) => {
         if (!state.userImage || state.caseMode === 'color') return;
         state.isDragging = true;
-        state.dragStartX = e.clientX - state.imgOffsetX;
-        state.dragStartY = e.clientY - state.imgOffsetY;
+        state.dragLastX = e.clientX;
+        state.dragLastY = e.clientY;
         canvas.style.cursor = 'grabbing';
     });
 
     window.addEventListener('mousemove', (e) => {
         if (!state.isDragging) return;
-        state.imgOffsetX = e.clientX - state.dragStartX;
-        state.imgOffsetY = e.clientY - state.dragStartY;
+        const screenDx = (e.clientX - state.dragLastX) / state.viewportZoom;
+        const screenDy = (e.clientY - state.dragLastY) / state.viewportZoom;
+        state.dragLastX = e.clientX;
+        state.dragLastY = e.clientY;
+
+        // Rotate movement vectors based on phone rotation angle
+        const rad = -(state.phoneRotate * Math.PI) / 180;
+        const dx = screenDx * Math.cos(rad) - screenDy * Math.sin(rad);
+        const dy = screenDx * Math.sin(rad) + screenDy * Math.cos(rad);
+
+        state.imgOffsetX += dx;
+        state.imgOffsetY += dy;
         renderCanvas();
     });
 
@@ -548,6 +692,52 @@ document.addEventListener('DOMContentLoaded', () => {
             state.isDragging = false;
             canvas.style.cursor = 'grab';
         }
+    });
+
+    // Touch Support on Canvas
+    canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1 && state.userImage && state.caseMode !== 'color') {
+            state.isDragging = true;
+            state.dragLastX = e.touches[0].clientX;
+            state.dragLastY = e.touches[0].clientY;
+        } else if (e.touches.length === 2) {
+            state.isDragging = false;
+            initialTouchDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && state.isDragging) {
+            const screenDx = (e.touches[0].clientX - state.dragLastX) / state.viewportZoom;
+            const screenDy = (e.touches[0].clientY - state.dragLastY) / state.viewportZoom;
+            state.dragLastX = e.touches[0].clientX;
+            state.dragLastY = e.touches[0].clientY;
+
+            const rad = -(state.phoneRotate * Math.PI) / 180;
+            const dx = screenDx * Math.cos(rad) - screenDy * Math.sin(rad);
+            const dy = screenDx * Math.sin(rad) + screenDy * Math.cos(rad);
+
+            state.imgOffsetX += dx;
+            state.imgOffsetY += dy;
+            renderCanvas();
+        } else if (e.touches.length === 2 && initialTouchDist) {
+            const currentDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            const scaleFactor = currentDist / initialTouchDist;
+            initialTouchDist = currentDist;
+            state.viewportZoom = Math.min(3.0, Math.max(0.5, Math.round((state.viewportZoom * scaleFactor) * 100) / 100));
+            updateViewportZoom();
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', () => {
+        state.isDragging = false;
+        initialTouchDist = null;
     });
 
     // Reset All
@@ -600,6 +790,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // MULTI-MODEL DYNAMIC CANVAS RENDER ENGINE
     // ==========================================
     function renderCanvas() {
+        // Adapt canvas width & height to orientation angle
+        const isLandscape = (state.phoneRotate % 180 === 90);
+        if (isLandscape) {
+            if (canvas.width !== 1100 || canvas.height !== 700) {
+                canvas.width = 1100;
+                canvas.height = 700;
+            }
+        } else if (state.phoneRotate % 90 !== 0) {
+            if (canvas.width !== 1000 || canvas.height !== 1000) {
+                canvas.width = 1000;
+                canvas.height = 1000;
+            }
+        } else {
+            if (canvas.width !== 700 || canvas.height !== 1100) {
+                canvas.width = 700;
+                canvas.height = 1100;
+            }
+        }
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const phone = phoneData[state.phoneModel] || phoneData.poco_x7_green;
@@ -612,11 +821,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const x = cx - pWidth / 2;
         const y = cy - pHeight / 2;
 
+        ctx.save();
+        // Translate to canvas center and rotate by state.phoneRotate
+        ctx.translate(cx, cy);
+        ctx.rotate((state.phoneRotate * Math.PI) / 180);
+        ctx.translate(-cx, -cy);
+
         if (state.viewMode === 'back') {
             drawPhoneBack(ctx, x, y, pWidth, pHeight, pRadius, phone);
         } else {
             drawPhoneFront(ctx, x, y, pWidth, pHeight, pRadius, phone);
         }
+
+        ctx.restore();
     }
 
     function drawPhoneBack(ctx, x, y, w, h, r, phone) {

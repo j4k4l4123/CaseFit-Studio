@@ -130,6 +130,21 @@
                             <input type="color" id="customBodyColor" value="#94d3ac" class="color-picker-input" title="Pilih Warna Custom">
                         </div>
                     </div>
+
+                    <!-- Phone Orientation & Tilt Angle Control -->
+                    <div class="input-group" style="margin-top: 14px;">
+                        <div class="slider-header">
+                            <label for="sliderPhoneRotate"><i data-lucide="rotate-cw"></i> Orientasi / Kemiringan HP:</label>
+                            <span id="valPhoneRotate">0°</span>
+                        </div>
+                        <input type="range" id="sliderPhoneRotate" min="0" max="360" value="0">
+                        <div class="quick-chips-row" id="phoneAngleChips" style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="chip-preset-sm active" data-angle="0">0° Tegak</button>
+                            <button class="chip-preset-sm" data-angle="90">90° Miring (L)</button>
+                            <button class="chip-preset-sm" data-angle="180">180° Terbalik</button>
+                            <button class="chip-preset-sm" data-angle="270">270° Miring (R)</button>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- SECTION 2: INPUT GAMBAR / CASING HP -->
@@ -186,10 +201,18 @@
                             <div class="control-grid">
                                 <div class="slider-control">
                                     <div class="slider-header">
-                                        <label for="sliderScale"><i data-lucide="maximize-2"></i> Ukuran / Zoom</label>
+                                        <label for="sliderScale"><i data-lucide="maximize-2"></i> Ukuran / Zoom Gambar</label>
                                         <span id="valScale">100%</span>
                                     </div>
-                                    <input type="range" id="sliderScale" min="20" max="300" value="100">
+                                    <input type="range" id="sliderScale" min="10" max="500" value="100">
+                                    <div class="quick-chips-row" id="imgScaleChips" style="margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap;">
+                                        <button class="chip-preset-xs" data-scale="50">50%</button>
+                                        <button class="chip-preset-xs active" data-scale="100">100%</button>
+                                        <button class="chip-preset-xs" data-scale="150">150%</button>
+                                        <button class="chip-preset-xs" data-scale="200">200%</button>
+                                        <button class="chip-preset-xs" data-scale="250">250%</button>
+                                        <button class="chip-preset-xs" data-scale="300">300%</button>
+                                    </div>
                                 </div>
 
                                 <div class="slider-control">
@@ -361,10 +384,25 @@
                 <div class="stage-toolbar card-glass">
                     <div class="view-toggle-group">
                         <button class="view-btn active" id="btnViewBack" data-view="back">
-                            <i data-lucide="smartphone"></i> Tampilan Belakang (Casing)
+                            <i data-lucide="smartphone"></i> Tampilan Belakang
                         </button>
                         <button class="view-btn" id="btnViewFront" data-view="front">
-                            <i data-lucide="smartphone-charging"></i> Tampilan Depan (Layar)
+                            <i data-lucide="smartphone-charging"></i> Tampilan Depan
+                        </button>
+                    </div>
+
+                    <div class="orientation-toggle-group">
+                        <button class="orient-btn active" id="btnOrientPortrait" title="Mode Tegak (Portrait 0°)">
+                            <i data-lucide="smartphone"></i> Tegak
+                        </button>
+                        <button class="orient-btn" id="btnOrientLandscape" title="Mode Miring (Landscape 90°)">
+                            <i data-lucide="smartphone" style="transform: rotate(90deg);"></i> Miring (Landscape)
+                        </button>
+                        <button class="btn-icon sm" id="btnRotatePhoneCcw" title="Putar HP -90°">
+                            <i data-lucide="rotate-ccw"></i>
+                        </button>
+                        <button class="btn-icon sm" id="btnRotatePhoneCw" title="Putar HP +90°">
+                            <i data-lucide="rotate-cw"></i>
                         </button>
                     </div>
 
@@ -373,13 +411,22 @@
                             <input type="checkbox" id="chkGlassReflection" checked>
                             <span class="slider-round"></span>
                         </label>
-                        <span><i data-lucide="sparkles"></i> Pantulan Cahaya 3D</span>
+                        <span><i data-lucide="sparkles"></i> Pantulan 3D</span>
                     </div>
 
                     <div class="zoom-controls">
-                        <button id="btnZoomOut" class="btn-icon sm" title="Zoom Out"><i data-lucide="zoom-out"></i></button>
-                        <span id="canvasZoomVal">100%</span>
-                        <button id="btnZoomIn" class="btn-icon sm" title="Zoom In"><i data-lucide="zoom-in"></i></button>
+                        <button id="btnZoomOut" class="btn-icon sm" title="Zoom Out (-)"><i data-lucide="zoom-out"></i></button>
+                        <input type="range" id="sliderViewportZoom" class="zoom-slider-sm" min="50" max="300" step="5" value="100" title="Geser Zoom Canvas (50% - 300%)">
+                        <span id="canvasZoomVal" title="Klik untuk Reset Zoom (100%)" style="cursor: pointer; font-weight: 700;">100%</span>
+                        <button id="btnZoomIn" class="btn-icon sm" title="Zoom In (+) - Hingga 300%"><i data-lucide="zoom-in"></i></button>
+                        <button id="btnZoomReset" class="btn-icon sm" title="Reset Zoom (100%)"><i data-lucide="maximize-2"></i></button>
+
+                        <div class="zoom-presets-row" id="viewportZoomChips">
+                            <button class="chip-preset-xs" data-vzoom="100">100%</button>
+                            <button class="chip-preset-xs" data-vzoom="150">150%</button>
+                            <button class="chip-preset-xs" data-vzoom="200">200%</button>
+                            <button class="chip-preset-xs" data-vzoom="300">300%</button>
+                        </div>
                     </div>
                 </div>
 
