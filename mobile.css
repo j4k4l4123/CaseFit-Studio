@@ -61,18 +61,22 @@
         gap: 16px;
     }
 
-    /* Put Preview Stage at the TOP on Mobile so user immediately sees the HP Mockup! */
+    /* Put Preview Stage at the TOP on Mobile (no sticky clipping) */
     .preview-stage {
         order: -1;
-        position: sticky;
-        top: 8px;
-        z-index: 90;
+        position: relative;
+        z-index: 10;
         gap: 12px;
+        width: 100%;
     }
 
     .stage-toolbar {
-        padding: 10px 14px;
-        gap: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        gap: 10px;
         border-radius: var(--radius-md);
     }
 
@@ -88,25 +92,69 @@
         font-size: 0.78rem;
     }
 
+    /* FIX 3D LIGHT REFLECTION TOGGLE ON MOBILE */
     .lighting-toggle {
-        font-size: 0.78rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        margin: 0;
+    }
+
+    .lighting-toggle span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .slider-round {
+        border-radius: 20px;
     }
 
     .zoom-controls {
-        font-size: 0.78rem;
-        gap: 6px;
+        display: flex;
+        align-items: center;
+        font-size: 0.8rem;
+        gap: 8px;
     }
 
-    /* Canvas Viewport Scaling on Mobile */
+    /* FIX ZOOM IN UNCLIPPED CANVASP VIEWPORT ON MOBILE */
     .canvas-viewport {
         min-height: 380px;
-        max-height: 480px;
+        max-height: 560px;
         border-radius: var(--radius-md);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 25px rgba(0, 0, 0, 0.7);
+        overflow: auto; /* Allows smooth panning when zoomed in up to 300%! */
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y;
+        position: relative;
     }
 
+    .canvas-wrapper {
+        margin: auto;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform-origin: center center;
+    }
+
+    /* FIX TOUCH DRAG INTERACTION ON CANVAS MOBILE */
     canvas#phoneCanvas {
-        max-height: 420px;
+        max-height: 440px;
+        touch-action: none; /* Prevents mobile browser from hijacking drag gesture for page scroll */
+        cursor: grab;
     }
 
     .canvas-drag-hint {
@@ -115,6 +163,7 @@
         bottom: 10px;
         max-width: 90%;
         text-align: center;
+        pointer-events: none;
     }
 
     /* 4. CONTROL PANEL & SECTIONS ON MOBILE */

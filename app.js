@@ -729,7 +729,14 @@ document.addEventListener('DOMContentLoaded', () => {
             state.dragLastX = e.touches[0].clientX;
             state.dragLastY = e.touches[0].clientY;
 
-            if (!state.userImage || state.caseMode === 'color') {
+            const rect = canvas.getBoundingClientRect();
+            const touchX = e.touches[0].clientX - rect.left;
+            const touchY = e.touches[0].clientY - rect.top;
+            const canvasCx = rect.width / 2;
+            const canvasCy = rect.height / 2;
+            const distFromCenter = Math.hypot(touchX - canvasCx, touchY - canvasCy);
+
+            if (!state.userImage || state.caseMode === 'color' || distFromCenter > (rect.height * 0.35)) {
                 dragMode = 'phone';
             } else {
                 dragMode = 'image';
@@ -741,16 +748,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.touches[0].clientY - e.touches[1].clientY
             );
         }
-    }, { passive: true });
+    }, { passive: false });
 
     canvas.addEventListener('touchmove', (e) => {
         if (e.touches.length === 1 && state.isDragging) {
+            if (e.cancelable) e.preventDefault();
             if (dragMode === 'phone') {
                 const dx = (e.touches[0].clientX - state.dragLastX);
                 state.dragLastX = e.touches[0].clientX;
                 state.dragLastY = e.touches[0].clientY;
 
-                state.phoneRotate = ((state.phoneRotate + dx * 0.6) % 360 + 360) % 360;
+                state.phoneRotate = ((state.phoneRotate + dx * 0.8) % 360 + 360) % 360;
+                if (sliderPhoneRotate) sliderPhoneRotate.value = Math.round(state.phoneRotate);
+                if (valPhoneRotate) valPhoneRotate.textContent = `${Math.round(state.phoneRotate)}°`;
                 renderCanvas();
             } else if (dragMode === 'image') {
                 const screenDx = (e.touches[0].clientX - state.dragLastX) / state.viewportZoom;
@@ -767,6 +777,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderCanvas();
             }
         } else if (e.touches.length === 2 && initialTouchDist) {
+            if (e.cancelable) e.preventDefault();
             const currentDist = Math.hypot(
                 e.touches[0].clientX - e.touches[1].clientX,
                 e.touches[0].clientY - e.touches[1].clientY
@@ -776,7 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
             state.viewportZoom = Math.min(3.0, Math.max(0.5, Math.round((state.viewportZoom * scaleFactor) * 100) / 100));
             updateViewportZoom();
         }
-    }, { passive: true });
+    }, { passive: false });
 
     canvas.addEventListener('touchend', () => {
         if (state.isDragging && dragMode === 'phone') {
