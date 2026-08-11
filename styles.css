@@ -865,13 +865,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
     align-items: center;
     justify-content: space-between;
     padding: 12px 20px;
-    gap: 12px;
-    flex-wrap: wrap;
 }
 
-.view-toggle-group, .orientation-toggle-group {
+.view-toggle-group {
     display: flex;
-    align-items: center;
     gap: 6px;
     background: rgba(15, 23, 42, 0.6);
     padding: 4px;
@@ -879,7 +876,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     border: 1px solid var(--border-color);
 }
 
-.view-btn, .orient-btn {
+.view-btn {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -897,35 +894,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .view-btn.active {
     background: var(--poco-green);
     color: #022c22;
-}
-
-.orient-btn.active {
-    background: rgba(56, 189, 248, 0.25);
-    color: #38bdf8;
-    border: 1px solid rgba(56, 189, 248, 0.5);
-}
-
-.chip-preset-sm {
-    padding: 4px 10px;
-    border: 1px solid var(--border-color);
-    background: rgba(15, 23, 42, 0.6);
-    color: var(--text-secondary);
-    font-size: 0.76rem;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.chip-preset-sm:hover {
-    border-color: #38bdf8;
-    color: var(--text-primary);
-}
-
-.chip-preset-sm.active {
-    background: #38bdf8;
-    color: #0f172a;
-    border-color: #38bdf8;
 }
 
 .lighting-toggle {
@@ -984,42 +952,6 @@ input:checked + .slider-round:before {
     gap: 8px;
     font-size: 0.82rem;
     color: var(--text-secondary);
-    flex-wrap: wrap;
-}
-
-.zoom-slider-sm {
-    width: 80px;
-    accent-color: #38bdf8;
-    cursor: pointer;
-}
-
-.zoom-presets-row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.chip-preset-xs {
-    padding: 3px 7px;
-    border: 1px solid var(--border-color);
-    background: rgba(15, 23, 42, 0.6);
-    color: var(--text-secondary);
-    font-size: 0.72rem;
-    font-weight: 600;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.chip-preset-xs:hover {
-    border-color: #38bdf8;
-    color: var(--text-primary);
-}
-
-.chip-preset-xs.active {
-    background: #38bdf8;
-    color: #0f172a;
-    border-color: #38bdf8;
 }
 
 /* Canvas Viewport */

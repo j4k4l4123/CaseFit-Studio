@@ -551,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCanvas();
     });
 
-    // Viewport Zoom Controls (Max 3.0x / 300% zoom)
+    // Viewport Zoom Controls (Max 3.0x / 300% zoom - up to 3x as close!)
     btnZoomIn.addEventListener('click', () => {
         state.viewportZoom = Math.min(3.0, Math.round((state.viewportZoom + 0.25) * 100) / 100);
         updateViewportZoom();
@@ -569,29 +569,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    canvasZoomVal.addEventListener('click', () => {
-        state.viewportZoom = 1.0;
-        updateViewportZoom();
-    });
-
-    if (sliderViewportZoom) {
-        sliderViewportZoom.addEventListener('input', (e) => {
-            state.viewportZoom = parseFloat(e.target.value) / 100;
+    if (canvasZoomVal) {
+        canvasZoomVal.addEventListener('click', () => {
+            state.viewportZoom = 1.0;
             updateViewportZoom();
         });
     }
 
-    if (viewportZoomChips) {
-        viewportZoomChips.addEventListener('click', (e) => {
-            const btn = e.target.closest('.chip-preset-xs');
-            if (btn && btn.dataset.vzoom) {
-                state.viewportZoom = parseInt(btn.dataset.vzoom) / 100;
-                updateViewportZoom();
-            }
-        });
-    }
-
-    // Mouse Wheel Zoom on Preview Canvas Viewport
+    // Mouse Wheel Zoom on Preview Canvas Viewport (Up to 300% / 3.0x)
     if (canvasViewport) {
         canvasViewport.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -604,21 +589,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateViewportZoom() {
         state.viewportZoom = Math.min(3.0, Math.max(0.5, state.viewportZoom));
         canvasWrapper.style.transform = `scale(${state.viewportZoom})`;
-        const pct = Math.round(state.viewportZoom * 100);
-        canvasZoomVal.textContent = `${pct}%`;
-        if (sliderViewportZoom) sliderViewportZoom.value = pct;
-        if (viewportZoomChips) {
-            viewportZoomChips.querySelectorAll('.chip-preset-xs').forEach(chip => {
-                chip.classList.toggle('active', parseInt(chip.dataset.vzoom) === pct);
-            });
+        if (canvasZoomVal) {
+            canvasZoomVal.textContent = `${Math.round(state.viewportZoom * 100)}%`;
         }
     }
 
-    // Phone Orientation & Rotation Angle Controls
+    // Phone Orientation & Rotation Angle Helper
     function setPhoneRotation(angle) {
         state.phoneRotate = ((angle % 360) + 360) % 360;
-        if (sliderPhoneRotate) sliderPhoneRotate.value = state.phoneRotate;
-        if (valPhoneRotate) valPhoneRotate.textContent = `${state.phoneRotate}°`;
+        if (sliderPhoneRotate) sliderPhoneRotate.value = Math.round(state.phoneRotate);
+        if (valPhoneRotate) valPhoneRotate.textContent = `${Math.round(state.phoneRotate)}°`;
 
         if (btnOrientPortrait && btnOrientLandscape) {
             btnOrientPortrait.classList.toggle('active', state.phoneRotate === 0);
@@ -659,47 +639,101 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Canvas Dragging with Orientation Support (Mouse & Touch)
+    // ==========================================
+    // INTERACTIVE DRAG-TO-ROTATE HP & IMAGE DRAG
+    // ==========================================
+    let dragMode = null; // 'phone' (rotate HP) or 'image' (move custom design)
     let initialTouchDist = null;
 
     canvas.addEventListener('mousedown', (e) => {
-        if (!state.userImage || state.caseMode === 'color') return;
         state.isDragging = true;
         state.dragLastX = e.clientX;
         state.dragLastY = e.clientY;
-        canvas.style.cursor = 'grabbing';
+
+        // Check if user is dragging phone rotation vs image move:
+        // Hold Shift / Alt / Right Click OR no user image OR clicked outside case -> rotate phone HP
+        const isRightOrShift = (e.button === 2 || e.shiftKey || e.altKey);
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const canvasCx = rect.width / 2;
+        const canvasCy = rect.height / 2;
+        const distFromCenter = Math.hypot(mouseX - canvasCx, mouseY - canvasCy);
+
+        // If no user image uploaded OR color mode OR holding shift/right-click OR clicked near outer edge -> Rotate Phone HP
+        if (!state.userImage || state.caseMode === 'color' || isRightOrShift || distFromCenter > (rect.height * 0.35)) {
+            dragMode = 'phone';
+            canvas.style.cursor = 'grabbing';
+        } else {
+            dragMode = 'image';
+            canvas.style.cursor = 'grabbing';
+        }
     });
 
     window.addEventListener('mousemove', (e) => {
         if (!state.isDragging) return;
-        const screenDx = (e.clientX - state.dragLastX) / state.viewportZoom;
-        const screenDy = (e.clientY - state.dragLastY) / state.viewportZoom;
-        state.dragLastX = e.clientX;
-        state.dragLastY = e.clientY;
 
-        // Rotate movement vectors based on phone rotation angle
-        const rad = -(state.phoneRotate * Math.PI) / 180;
-        const dx = screenDx * Math.cos(rad) - screenDy * Math.sin(rad);
-        const dy = screenDx * Math.sin(rad) + screenDy * Math.cos(rad);
+        if (dragMode === 'phone') {
+            // Dragging left/right rotates the HP mockup angle!
+            const dx = (e.clientX - state.dragLastX);
+            state.dragLastX = e.clientX;
+            state.dragLastY = e.clientY;
 
-        state.imgOffsetX += dx;
-        state.imgOffsetY += dy;
-        renderCanvas();
+            state.phoneRotate = ((state.phoneRotate + dx * 0.6) % 360 + 360) % 360;
+            if (sliderPhoneRotate) sliderPhoneRotate.value = Math.round(state.phoneRotate);
+            if (valPhoneRotate) valPhoneRotate.textContent = `${Math.round(state.phoneRotate)}°`;
+            renderCanvas();
+        } else if (dragMode === 'image') {
+            const screenDx = (e.clientX - state.dragLastX) / state.viewportZoom;
+            const screenDy = (e.clientY - state.dragLastY) / state.viewportZoom;
+            state.dragLastX = e.clientX;
+            state.dragLastY = e.clientY;
+
+            // Rotate movement vectors based on phone rotation angle
+            const rad = -(state.phoneRotate * Math.PI) / 180;
+            const dx = screenDx * Math.cos(rad) - screenDy * Math.sin(rad);
+            const dy = screenDx * Math.sin(rad) + screenDy * Math.cos(rad);
+
+            state.imgOffsetX += dx;
+            state.imgOffsetY += dy;
+            renderCanvas();
+        }
     });
 
     window.addEventListener('mouseup', () => {
         if (state.isDragging) {
             state.isDragging = false;
             canvas.style.cursor = 'grab';
+
+            // Snap-assist for Phone Rotation near 0°, 90° (Landscape), 180°, 270°
+            if (dragMode === 'phone') {
+                const snapAngles = [0, 90, 180, 270, 360];
+                for (const target of snapAngles) {
+                    if (Math.abs(state.phoneRotate - target) < 6 || Math.abs(state.phoneRotate - target + 360) < 6) {
+                        setPhoneRotation(target % 360);
+                        break;
+                    }
+                }
+            }
+            dragMode = null;
         }
     });
 
-    // Touch Support on Canvas
+    // Prevent context menu on right click so right drag works smoothly
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    // Touch Support on Canvas (Drag HP Rotation & Pinch Zoom)
     canvas.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 1 && state.userImage && state.caseMode !== 'color') {
+        if (e.touches.length === 1) {
             state.isDragging = true;
             state.dragLastX = e.touches[0].clientX;
             state.dragLastY = e.touches[0].clientY;
+
+            if (!state.userImage || state.caseMode === 'color') {
+                dragMode = 'phone';
+            } else {
+                dragMode = 'image';
+            }
         } else if (e.touches.length === 2) {
             state.isDragging = false;
             initialTouchDist = Math.hypot(
@@ -711,18 +745,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     canvas.addEventListener('touchmove', (e) => {
         if (e.touches.length === 1 && state.isDragging) {
-            const screenDx = (e.touches[0].clientX - state.dragLastX) / state.viewportZoom;
-            const screenDy = (e.touches[0].clientY - state.dragLastY) / state.viewportZoom;
-            state.dragLastX = e.touches[0].clientX;
-            state.dragLastY = e.touches[0].clientY;
+            if (dragMode === 'phone') {
+                const dx = (e.touches[0].clientX - state.dragLastX);
+                state.dragLastX = e.touches[0].clientX;
+                state.dragLastY = e.touches[0].clientY;
 
-            const rad = -(state.phoneRotate * Math.PI) / 180;
-            const dx = screenDx * Math.cos(rad) - screenDy * Math.sin(rad);
-            const dy = screenDx * Math.sin(rad) + screenDy * Math.cos(rad);
+                state.phoneRotate = ((state.phoneRotate + dx * 0.6) % 360 + 360) % 360;
+                renderCanvas();
+            } else if (dragMode === 'image') {
+                const screenDx = (e.touches[0].clientX - state.dragLastX) / state.viewportZoom;
+                const screenDy = (e.touches[0].clientY - state.dragLastY) / state.viewportZoom;
+                state.dragLastX = e.touches[0].clientX;
+                state.dragLastY = e.touches[0].clientY;
 
-            state.imgOffsetX += dx;
-            state.imgOffsetY += dy;
-            renderCanvas();
+                const rad = -(state.phoneRotate * Math.PI) / 180;
+                const dx = screenDx * Math.cos(rad) - screenDy * Math.sin(rad);
+                const dy = screenDx * Math.sin(rad) + screenDy * Math.cos(rad);
+
+                state.imgOffsetX += dx;
+                state.imgOffsetY += dy;
+                renderCanvas();
+            }
         } else if (e.touches.length === 2 && initialTouchDist) {
             const currentDist = Math.hypot(
                 e.touches[0].clientX - e.touches[1].clientX,
@@ -736,7 +779,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     canvas.addEventListener('touchend', () => {
+        if (state.isDragging && dragMode === 'phone') {
+            const snapAngles = [0, 90, 180, 270, 360];
+            for (const target of snapAngles) {
+                if (Math.abs(state.phoneRotate - target) < 6 || Math.abs(state.phoneRotate - target + 360) < 6) {
+                    setPhoneRotation(target % 360);
+                    break;
+                }
+            }
+        }
         state.isDragging = false;
+        dragMode = null;
         initialTouchDist = null;
     });
 
